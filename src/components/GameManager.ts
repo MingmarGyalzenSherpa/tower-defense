@@ -1,23 +1,17 @@
-import { CellDimensions, Grid } from "../constants/constants";
+import Level1 from "./Level1";
 
 export default class GameManager {
+  levels: number[];
   context: CanvasRenderingContext2D;
+
   constructor(context: CanvasRenderingContext2D) {
     this.context = context;
     this.context.fillStyle = "black";
+    this.levels = [1, 2, 3];
+    new Level1(this.context);
+  }
 
-    for (let i = 0; i < Grid.COLUMN; i++) {
-      for (let j = 0; j < Grid.ROW; j++) {
-        this.context.strokeRect(
-          j * CellDimensions.WIDTH,
-          i * CellDimensions.HEIGHT,
-          CellDimensions.WIDTH,
-          CellDimensions.HEIGHT
-        );
-        console.log(j);
-      }
-      console.log("i " + i);
-      console.log(Grid.COLUMN);
-    }
+  draw() {
+    //draw levels
   }
 }
