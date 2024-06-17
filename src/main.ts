@@ -7,4 +7,4 @@ canvas.width = CanvasDimension.WIDTH;
 canvas.height = CanvasDimension.HEIGHT;
 
 const context = canvas.getContext("2d");
-new GameManager(context!);
+new GameManager(canvas, context!);
