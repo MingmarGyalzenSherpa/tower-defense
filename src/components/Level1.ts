@@ -2,7 +2,8 @@ import { CanvasDimension, CellDimensions } from "../constants/constants";
 import collision from "../utils/utils";
 import Cell from "./Cell";
 import Mouse from "./Mouse";
-import bgTile from "../assets/tileset/tileset.png";
+import Tiles from "../assets/tileset/tileset.png";
+
 export default class Level1 {
   context: CanvasRenderingContext2D;
   grids: Cell[];
@@ -16,7 +17,7 @@ export default class Level1 {
     this.mouse = new Mouse();
     this.grids = [];
     this.bgImg = new Image();
-    this.bgImg.src = bgTile;
+    this.bgImg.src = Tiles;
     //positions for path
     this.pathsPos = [
       {
@@ -159,8 +160,8 @@ export default class Level1 {
           this.bgImg,
           10,
           5,
-          30,
-          30,
+          100,
+          100,
           x,
           y,
           CellDimensions.WIDTH,
@@ -175,7 +176,12 @@ export default class Level1 {
     for (let i = 0; i < this.pathsPos.length; i++) {
       this.context.beginPath();
       this.context.fillStyle = "blue";
-      this.context.fillRect(
+      this.context.drawImage(
+        this.bgImg,
+        220,
+        50,
+        100,
+        100,
         this.pathsPos[i].x * CellDimensions.HEIGHT,
         this.pathsPos[i].y * CellDimensions.HEIGHT,
         CellDimensions.WIDTH,
