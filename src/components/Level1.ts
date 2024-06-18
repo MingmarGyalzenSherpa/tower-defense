@@ -3,21 +3,34 @@ import collision from "../utils/utils";
 import Cell from "./Cell";
 import Mouse from "./Mouse";
 import Tiles from "../assets/tileset/tileset.png";
-
+import Orc from "./Orc";
+import CannonL1TowerHead from "../assets/tower/Cannon.png";
 export default class Level1 {
   context: CanvasRenderingContext2D;
   grids: Cell[];
   pathsPos: { x: number; y: number }[];
   bgImg: CanvasImageSource;
   mouse: Mouse;
+  frame: number;
+  cannonL1Tower: CanvasImageSource;
+  towers: [];
+  enemies: Orc[];
   canvas: HTMLCanvasElement;
+  availableTowers: CanvasImageSource[];
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
     this.canvas = canvas;
     this.context = context;
     this.mouse = new Mouse();
+    this.enemies = [];
     this.grids = [];
+    this.frame = 0;
     this.bgImg = new Image();
     this.bgImg.src = Tiles;
+    this.cannonL1Tower = new Image();
+    this.cannonL1Tower.src = CannonL1TowerHead;
+    this.availableTowers = [];
+    this.availableTowers.push(this.cannonL1Tower);
+    this.towers = [];
     //positions for path
     this.pathsPos = [
       {
@@ -105,16 +118,47 @@ export default class Level1 {
         y: 5,
       },
     ];
+    this.enemies.push(
+      new Orc(this.context, this.pathsPos[0].y * CellDimensions.HEIGHT)
+    );
     this.createGrid();
     this.drawGrid();
     this.canvas.addEventListener("mousemove", this.handleMouse);
   }
 
+  generateEnemy() {
+    // if (this.frame % 10 === 0) {
+    // this.enemies.push(
+    //   new Orc(this.context, this.pathsPos[0].y * CellDimensions.HEIGHT)
+    // );
+    // }
+  }
+
+  drawEnemy() {
+    for (let i = 0; i < this.enemies.length; i++) {
+      this.enemies[i].draw();
+    }
+  }
+
   draw() {
     this.drawResources();
+    this.drawAvailableTowers();
     this.drawBackground();
     this.drawPath();
     this.drawGrid();
+    this.drawEnemy();
+  }
+
+  update() {
+    this.frame++;
+    this.generateEnemy();
+    this.updateEnemies();
+  }
+
+  updateEnemies() {
+    for (let i = 0; i < this.enemies.length; i++) {
+      this.enemies[i].update(this.pathsPos);
+    }
   }
 
   drawResources() {
@@ -122,6 +166,38 @@ export default class Level1 {
     this.context.fillStyle = "lightgreen";
     this.context.fillRect(0, 0, this.canvas.width, CellDimensions.HEIGHT * 2);
     this.context.closePath();
+  }
+
+  drawAvailableTowers() {
+    let i = 0;
+    for (let x = 9; x <= 10 && i < this.availableTowers.length; x++) {
+      this.context.beginPath();
+      CellDimensions.HEIGHT;
+      if (
+        collision(this.mouse, {
+          x: x * CellDimensions.WIDTH,
+          y: CellDimensions.HEIGHT,
+          width: CellDimensions.WIDTH,
+          height: CellDimensions.HEIGHT,
+        })
+      ) {
+        this.context.strokeRect(
+          x * CellDimensions.WIDTH,
+          CellDimensions.HEIGHT,
+          CellDimensions.WIDTH,
+          CellDimensions.HEIGHT
+        );
+      }
+      this.context.drawImage(
+        this.availableTowers[i],
+        x * CellDimensions.WIDTH,
+        CellDimensions.HEIGHT,
+        CellDimensions.WIDTH,
+        CellDimensions.HEIGHT
+      );
+      this.context.closePath();
+      i++;
+    }
   }
 
   handleMouse = (e: MouseEvent) => {

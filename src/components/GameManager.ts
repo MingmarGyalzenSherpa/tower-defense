@@ -19,6 +19,7 @@ export default class GameManager {
 
   start = () => {
     this.draw();
+    this.update();
     requestAnimationFrame(this.start);
   };
 
@@ -46,5 +47,8 @@ export default class GameManager {
     if (this.gameState !== GameState.PLAYING) return;
   }
 
-  update() {}
+  update() {
+    if (!this.curLevel) return;
+    this.curLevel.update();
+  }
 }
