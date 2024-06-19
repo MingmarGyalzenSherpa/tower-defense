@@ -24,7 +24,7 @@ export default class Level1 {
   cannonL1Tower: IAvailableTower;
   towers: any[];
   selectedTower?: number;
-  enemies: Orc[];
+  enemies: any[];
   canvas: HTMLCanvasElement;
   availableTowers: IAvailableTower[];
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
@@ -190,6 +190,16 @@ export default class Level1 {
     this.frame++;
     this.generateEnemy();
     this.updateEnemies();
+    this.updateTowers();
+  }
+
+  updateTowers() {
+    //check for enemy within range
+    for (let i = 0; i < this.towers.length; i++) {
+      for (let j = 0; j < this.enemies.length; j++) {
+        this.towers[i].update(this.enemies[j]);
+      }
+    }
   }
 
   updateEnemies() {

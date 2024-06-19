@@ -3,8 +3,8 @@ import { CellDimensions } from "../../constants/constants";
 export default class Orc {
   x: number;
   y: number;
-  w: number;
-  h: number;
+  width: number;
+  height: number;
   dy: number;
   dx: number;
   curPath: number;
@@ -19,14 +19,14 @@ export default class Orc {
     this.y = y;
     this.dy = 0;
     this.dx = 2;
-    this.w = CellDimensions.WIDTH;
-    this.h = CellDimensions.HEIGHT;
+    this.width = CellDimensions.WIDTH;
+    this.height = CellDimensions.HEIGHT;
   }
 
   draw() {
     this.context.beginPath();
     this.context.fillStyle = "red";
-    this.context.fillRect(this.x, this.y, this.w, this.h);
+    this.context.fillRect(this.x, this.y, this.width, this.height);
     this.context.closePath();
   }
 
