@@ -3,8 +3,17 @@ import collision from "../utils/utils";
 import Cell from "./Cell";
 import Mouse from "./Mouse";
 import Tiles from "../assets/tileset/tileset.png";
-import Orc from "./Orc";
+import Orc from "./Enemies/Orc";
 import CannonL1TowerHead from "../assets/tower/Cannon.png";
+import CannonL1 from "./CannonL1";
+
+interface IAvailableTower {
+  x?: number;
+  y?: number;
+  img: any;
+  width: number;
+  height: number;
+}
 export default class Level1 {
   context: CanvasRenderingContext2D;
   grids: Cell[];
@@ -12,11 +21,12 @@ export default class Level1 {
   bgImg: CanvasImageSource;
   mouse: Mouse;
   frame: number;
-  cannonL1Tower: CanvasImageSource;
-  towers: [];
+  cannonL1Tower: IAvailableTower;
+  towers: any[];
+  selectedTower?: number;
   enemies: Orc[];
   canvas: HTMLCanvasElement;
-  availableTowers: CanvasImageSource[];
+  availableTowers: IAvailableTower[];
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
     this.canvas = canvas;
     this.context = context;
@@ -26,10 +36,15 @@ export default class Level1 {
     this.frame = 0;
     this.bgImg = new Image();
     this.bgImg.src = Tiles;
-    this.cannonL1Tower = new Image();
-    this.cannonL1Tower.src = CannonL1TowerHead;
+    this.cannonL1Tower = {
+      img: new Image(),
+      width: CellDimensions.WIDTH,
+      height: CellDimensions.HEIGHT,
+    };
+    this.cannonL1Tower.img.src = CannonL1TowerHead;
     this.availableTowers = [];
     this.availableTowers.push(this.cannonL1Tower);
+
     this.towers = [];
     //positions for path
     this.pathsPos = [
@@ -124,7 +139,27 @@ export default class Level1 {
     this.createGrid();
     this.drawGrid();
     this.canvas.addEventListener("mousemove", this.handleMouse);
+    this.canvas.addEventListener("click", this.handleClick);
   }
+
+  handleClick = () => {
+    //check if resource tower is clicked
+    for (let i = 0; i < this.availableTowers.length; i++) {
+      if (
+        collision(this.mouse, {
+          x: this.availableTowers[i].x!,
+          y: this.availableTowers[i].y!,
+          width: this.availableTowers[i].width,
+          height: this.availableTowers[i].height,
+        })
+      ) {
+        this.selectedTower = i;
+      }
+    }
+
+    //place tower
+    this.placeTower();
+  };
 
   generateEnemy() {
     // if (this.frame % 10 === 0) {
@@ -147,6 +182,8 @@ export default class Level1 {
     this.drawPath();
     this.drawGrid();
     this.drawEnemy();
+    this.drawSelectedTower();
+    this.drawTowers();
   }
 
   update() {
@@ -168,36 +205,66 @@ export default class Level1 {
     this.context.closePath();
   }
 
+  drawTowers() {
+    if (this.towers.length == 0) return;
+    for (let i = 0; i < this.towers.length; i++) {
+      this.towers[i].draw();
+    }
+  }
+
   drawAvailableTowers() {
     let i = 0;
     for (let x = 9; x <= 10 && i < this.availableTowers.length; x++) {
       this.context.beginPath();
-      CellDimensions.HEIGHT;
+
+      //set property
+      this.availableTowers[i].x = x * CellDimensions.WIDTH;
+      this.availableTowers[i].y = CellDimensions.HEIGHT;
+
+      //check collision for  stroke
       if (
         collision(this.mouse, {
-          x: x * CellDimensions.WIDTH,
-          y: CellDimensions.HEIGHT,
-          width: CellDimensions.WIDTH,
-          height: CellDimensions.HEIGHT,
+          x: this.availableTowers[i].x!,
+          y: this.availableTowers[i].y!,
+          width: this.availableTowers[i].width,
+          height: this.availableTowers[i].height,
         })
       ) {
+        this.context.beginPath();
         this.context.strokeRect(
-          x * CellDimensions.WIDTH,
-          CellDimensions.HEIGHT,
-          CellDimensions.WIDTH,
-          CellDimensions.HEIGHT
+          this.availableTowers[i].x!,
+          this.availableTowers[i].y!,
+          this.availableTowers[i].width,
+          this.availableTowers[i].height
         );
       }
+      //draw image
       this.context.drawImage(
-        this.availableTowers[i],
-        x * CellDimensions.WIDTH,
-        CellDimensions.HEIGHT,
+        this.availableTowers[i].img as CanvasImageSource,
+        this.availableTowers[i].x!,
+        this.availableTowers[i].y!,
         CellDimensions.WIDTH,
         CellDimensions.HEIGHT
       );
-      this.context.closePath();
       i++;
     }
+  }
+
+  drawSelectedTower() {
+    let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
+    let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
+    if (this.selectedTower === undefined || gridY < 2) return;
+    this.context.beginPath();
+    this.context.globalAlpha = 0.2;
+    this.context.drawImage(
+      this.availableTowers[this.selectedTower].img,
+      gridX * this.availableTowers[this.selectedTower].width,
+      gridY * this.availableTowers[this.selectedTower].height,
+      this.availableTowers[this.selectedTower].width,
+      this.availableTowers[this.selectedTower].height
+    );
+    this.context.globalAlpha = 1;
+    this.context.closePath();
   }
 
   handleMouse = (e: MouseEvent) => {
@@ -214,6 +281,32 @@ export default class Level1 {
         this.grids.push(new Cell(this.context, j, i));
       }
     }
+  }
+
+  placeTower() {
+    let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
+    let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
+
+    //check if blocks the path
+    if (this.pathsPos.some((path) => path.x === gridX && path.y === gridY)) {
+      return;
+    }
+    if (this.selectedTower === undefined || gridY < 2) {
+      return;
+    }
+    let tower;
+    switch (this.selectedTower) {
+      case 0:
+        tower = new CannonL1(
+          gridX * CellDimensions.WIDTH,
+          gridY * CellDimensions.HEIGHT,
+          this.context
+        );
+        break;
+    }
+
+    this.towers.push(tower!);
+    this.selectedTower = undefined;
   }
 
   drawGrid() {
@@ -252,6 +345,7 @@ export default class Level1 {
     for (let i = 0; i < this.pathsPos.length; i++) {
       this.context.beginPath();
       this.context.fillStyle = "blue";
+
       this.context.drawImage(
         this.bgImg,
         220,

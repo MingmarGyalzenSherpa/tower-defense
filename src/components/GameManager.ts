@@ -46,7 +46,7 @@ export default class GameManager {
   collision() {
     if (this.gameState !== GameState.PLAYING) return;
   }
-
+sfsff
   update() {
     if (!this.curLevel) return;
     this.curLevel.update();

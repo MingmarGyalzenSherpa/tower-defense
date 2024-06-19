@@ -32,10 +32,10 @@ export default class CannonL1 {
     );
     this.context.drawImage(
       this.headImg,
-      this.x,
+      this.x + 10,
       this.y,
-      this.width,
-      this.height
+      this.width / 1.3,
+      this.height / 1.3
     );
     this.context.closePath();
   }

@@ -1,4 +1,4 @@
-import { CellDimensions } from "../constants/constants";
+import { CellDimensions } from "../../constants/constants";
 
 export default class Orc {
   x: number;
@@ -18,7 +18,7 @@ export default class Orc {
     this.x = -50;
     this.y = y;
     this.dy = 0;
-    this.dx = 1;
+    this.dx = 2;
     this.w = CellDimensions.WIDTH;
     this.h = CellDimensions.HEIGHT;
   }
@@ -33,25 +33,33 @@ export default class Orc {
   update(pathPos: { x: number; y: number }[]) {
     let targetX = pathPos[this.nextPath].x * CellDimensions.WIDTH;
     let targetY = pathPos[this.nextPath].y * CellDimensions.HEIGHT;
-    console.log({ targetX, targetY });
+    // console.log({ targetX, targetY });
 
     if (targetX > this.x) {
-      this.dx = 1;
+      this.dx = 2;
+      this.dy = 0;
     } else if (targetX < this.x) {
-      this.dx = -1;
+      this.dx = -2;
+      this.dy = 0;
     }
 
     if (targetY > this.y) {
-      this.dy = 1;
+      this.dy = 2;
+      this.dx = 0;
     } else if (targetY < this.y) {
-      this.dy = -1;
+      this.dy = -2;
+      this.dx = 0;
     }
-    if (this.x === targetX && this.y === targetY) {
+    if (
+      this.x === targetX &&
+      this.y === targetY &&
+      this.nextPath < pathPos.length
+    ) {
       this.nextPath++;
     }
-    console.log({ nextPth: this.nextPath });
+    // console.log({ nextPth: this.nextPath });
     this.y += this.dy;
     this.x += this.dx;
-    console.log(this.x, "   ", this.y);
+    // console.log(this.x, "   ", this.y);
   }
 }
