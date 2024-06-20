@@ -9,6 +9,7 @@ export default class Orc {
   dx: number;
   hp: number;
   maxHp: number;
+  coinGain: number;
   curPath: number;
   nextPath: number;
   context: CanvasRenderingContext2D;
@@ -24,6 +25,7 @@ export default class Orc {
     this.y = y;
     this.dy = 0;
     this.dx = 0.25;
+    this.coinGain = 20;
     this.srcX = 0;
     this.hp = 400;
     this.maxHp = 400;

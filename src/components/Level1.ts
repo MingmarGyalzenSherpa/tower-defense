@@ -8,6 +8,7 @@ import CannonL1TowerHead from "../assets/tower/Cannon.png";
 import CannonL1 from "./CannonL1";
 import CannonL2TowerHead from "../assets/tower/Cannon2.png";
 import CannonL2 from "./CannonL2";
+import CoinImg from "../assets/coin.png";
 interface IAvailableTower {
   x?: number;
   y?: number;
@@ -18,13 +19,14 @@ interface IAvailableTower {
 export default class Level1 {
   context: CanvasRenderingContext2D;
   grids: Cell[];
+  coin: number;
   pathsPos: { x: number; y: number }[];
   bgImg: CanvasImageSource;
   mouse: Mouse;
   frame: number;
   cannonL1Tower: IAvailableTower;
   cannonL2Tower: IAvailableTower;
-
+  coinImg: CanvasImageSource;
   towers: any[];
   selectedTower?: number;
   enemies: any[];
@@ -34,8 +36,11 @@ export default class Level1 {
     this.canvas = canvas;
     this.context = context;
     this.mouse = new Mouse();
+    this.coinImg = new Image();
+    this.coinImg.src = CoinImg;
     this.enemies = [];
     this.grids = [];
+    this.coin = 200;
     this.frame = 0;
     this.bgImg = new Image();
     this.bgImg.src = Tiles;
@@ -166,10 +171,57 @@ export default class Level1 {
         this.selectedTower = i;
       }
     }
+    this.handlePlacedTowerClick();
 
     //place tower
     this.placeTower();
   };
+
+  handlePlacedTowerClick() {
+    for (let i = 0; i < this.towers.length; i++) {
+      if (
+        collision(this.mouse, {
+          x: this.towers[i].x,
+          y: this.towers[i].y,
+          width: this.towers[i].width,
+          height: this.towers[i].height,
+        })
+      ) {
+        //draw upgrade or dismantle
+        this.context.beginPath();
+        this.context.fillStyle = "grey";
+        this.context.fillRect(
+          this.towers[i].x,
+          this.towers[i].y + this.towers[i].height,
+          this.towers[i].width / 2,
+          40
+        );
+        this.context.closePath();
+      }
+    }
+  }
+
+  drawCoin() {
+    let offsetX = 10;
+    let offsetY = 10;
+
+    this.context.beginPath();
+    this.context.drawImage(
+      this.coinImg,
+      offsetX,
+      offsetY,
+      CellDimensions.WIDTH,
+      CellDimensions.HEIGHT
+    );
+    this.context.font = "20px sans-serif";
+    this.context.fillStyle = "black";
+    this.context.fillText(
+      `Coins: ${this.coin}`,
+      offsetX + CellDimensions.WIDTH,
+      offsetY + CellDimensions.HEIGHT / 2
+    );
+    this.context.closePath();
+  }
 
   generateEnemy() {
     if (this.frame % 200 === 0 && this.frame % 600 != 0) {
@@ -187,6 +239,7 @@ export default class Level1 {
 
   draw() {
     this.drawResources();
+    this.drawCoin();
     this.drawAvailableTowers();
     this.drawBackground();
     this.drawPath();
@@ -216,7 +269,9 @@ export default class Level1 {
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].update(this.pathsPos);
       if (!this.enemies[i].getHp()) {
+        this.coin += this.enemies[i].coinGain;
         this.enemies.splice(i, 1);
+
         i--;
       }
     }

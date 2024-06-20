@@ -7,6 +7,8 @@ import collision from "../utils/utils";
 export default class CannonL1 {
   x: number;
   y: number;
+  cost: number;
+  upgradeCost: number;
   width: number;
   height: number;
   context: CanvasRenderingContext2D;
@@ -27,6 +29,7 @@ export default class CannonL1 {
     this.y = y;
     this.context = context;
     this.range = 200;
+    this.cost = 100;
     this.isLocked = false;
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;
@@ -35,6 +38,7 @@ export default class CannonL1 {
     this.baseImg.src = CannonBase;
     this.headImg.src = CannonHead;
     this.lastFireTime = 0;
+    this.upgradeCost = 400;
     this.fireRate = 1000;
     this.projectiles = [];
     this.projectileImg = new Image();
