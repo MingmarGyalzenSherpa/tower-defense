@@ -162,11 +162,11 @@ export default class Level1 {
   };
 
   generateEnemy() {
-    // if (this.frame % 10 === 0) {
-    // this.enemies.push(
-    //   new Orc(this.context, this.pathsPos[0].y * CellDimensions.HEIGHT)
-    // );
-    // }
+    if (this.frame % 200 === 0 && this.frame % 600 != 0) {
+      this.enemies.push(
+        new Orc(this.context, this.pathsPos[0].y * CellDimensions.HEIGHT)
+      );
+    }
   }
 
   drawEnemy() {
@@ -205,6 +205,10 @@ export default class Level1 {
   updateEnemies() {
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].update(this.pathsPos);
+      if (!this.enemies[i].getHp()) {
+        this.enemies.splice(i, 1);
+        i--;
+      }
     }
   }
 
