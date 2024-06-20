@@ -6,7 +6,8 @@ import Tiles from "../assets/tileset/tileset.png";
 import Orc from "./Enemies/Orc";
 import CannonL1TowerHead from "../assets/tower/Cannon.png";
 import CannonL1 from "./CannonL1";
-
+import CannonL2TowerHead from "../assets/tower/Cannon2.png";
+import CannonL2 from "./CannonL2";
 interface IAvailableTower {
   x?: number;
   y?: number;
@@ -22,6 +23,8 @@ export default class Level1 {
   mouse: Mouse;
   frame: number;
   cannonL1Tower: IAvailableTower;
+  cannonL2Tower: IAvailableTower;
+
   towers: any[];
   selectedTower?: number;
   enemies: any[];
@@ -42,8 +45,15 @@ export default class Level1 {
       height: CellDimensions.HEIGHT,
     };
     this.cannonL1Tower.img.src = CannonL1TowerHead;
+    this.cannonL2Tower = {
+      img: new Image(),
+      width: CellDimensions.WIDTH,
+      height: CellDimensions.HEIGHT,
+    };
+    this.cannonL2Tower.img.src = CannonL2TowerHead;
     this.availableTowers = [];
     this.availableTowers.push(this.cannonL1Tower);
+    this.availableTowers.push(this.cannonL2Tower);
 
     this.towers = [];
     //positions for path
@@ -312,6 +322,13 @@ export default class Level1 {
     switch (this.selectedTower) {
       case 0:
         tower = new CannonL1(
+          gridX * CellDimensions.WIDTH,
+          gridY * CellDimensions.HEIGHT,
+          this.context
+        );
+        break;
+      case 1:
+        tower = new CannonL2(
           gridX * CellDimensions.WIDTH,
           gridY * CellDimensions.HEIGHT,
           this.context
