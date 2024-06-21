@@ -1,14 +1,16 @@
-import { CellDimensions } from "../constants/constants";
-import CannonHead from "../assets/tower/Cannon.png";
-import CannonBase from "../assets/tower/Tower.png";
-import Projectile from "./Projectile";
-import ProjectileImg from "../assets/tower/Bullet_Cannon.png";
-import collision from "../utils/utils";
+import { CellDimensions } from "../../constants/constants";
+import CannonHead from "../../assets/tower/Cannon.png";
+import CannonBase from "../../assets/tower/Tower.png";
+import Projectile from "../Projectile";
+import ProjectileImg from "../../assets/tower/Bullet_Cannon.png";
+import collision from "../../utils/utils";
 export default class CannonL1 {
   x: number;
   y: number;
   cost: number;
   upgradeCost: number;
+  curLevel: number;
+  maxLevel: number;
   width: number;
   height: number;
   context: CanvasRenderingContext2D;
@@ -28,6 +30,8 @@ export default class CannonL1 {
     this.x = x;
     this.y = y;
     this.context = context;
+    this.curLevel = 1;
+    this.maxLevel = 2;
     this.range = 200;
     this.cost = 100;
     this.isLocked = false;

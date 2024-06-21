@@ -4,11 +4,13 @@ import Cell from "./Cell";
 import Mouse from "./Mouse";
 import Tiles from "../assets/tileset/tileset.png";
 import Orc from "./Enemies/Orc";
+import MoonTowerImg from "../assets/tower/redmoon_showcase.png";
 import CannonL1TowerHead from "../assets/tower/Cannon.png";
-import CannonL1 from "./CannonL1";
+import CannonL1 from "./Towers/CannonL1";
 import CannonL2TowerHead from "../assets/tower/Cannon2.png";
-import CannonL2 from "./CannonL2";
+import CannonL2 from "./Towers/CannonL2";
 import CoinImg from "../assets/coin.png";
+import MoonTower from "./Towers/MoonTower";
 interface IAvailableTower {
   x?: number;
   y?: number;
@@ -26,9 +28,11 @@ export default class Level1 {
   frame: number;
   cannonL1Tower: IAvailableTower;
   cannonL2Tower: IAvailableTower;
+  moonTower: IAvailableTower;
   coinImg: CanvasImageSource;
   towers: any[];
-  selectedTower?: number;
+  selectedAvailableTower?: number;
+  selectedDroppedTowerIndex?: number;
   enemies: any[];
   canvas: HTMLCanvasElement;
   availableTowers: IAvailableTower[];
@@ -55,10 +59,17 @@ export default class Level1 {
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
     };
+    this.moonTower = {
+      img: new Image(),
+      width: CellDimensions.WIDTH,
+      height: CellDimensions.HEIGHT,
+    };
+    this.moonTower.img.src = MoonTowerImg;
     this.cannonL2Tower.img.src = CannonL2TowerHead;
     this.availableTowers = [];
     this.availableTowers.push(this.cannonL1Tower);
     this.availableTowers.push(this.cannonL2Tower);
+    this.availableTowers.push(this.moonTower);
 
     this.towers = [];
     //positions for path
@@ -168,13 +179,14 @@ export default class Level1 {
           height: this.availableTowers[i].height,
         })
       ) {
-        this.selectedTower = i;
+        this.selectedAvailableTower = i;
       }
     }
-    this.handlePlacedTowerClick();
 
     //place tower
     this.placeTower();
+
+    this.handlePlacedTowerClick();
   };
 
   handlePlacedTowerClick() {
@@ -187,18 +199,37 @@ export default class Level1 {
           height: this.towers[i].height,
         })
       ) {
-        //draw upgrade or dismantle
-        this.context.beginPath();
-        this.context.fillStyle = "grey";
-        this.context.fillRect(
-          this.towers[i].x,
-          this.towers[i].y + this.towers[i].height,
-          this.towers[i].width / 2,
-          40
-        );
-        this.context.closePath();
+        this.selectedDroppedTowerIndex = i;
       }
     }
+  }
+
+  drawSelectedPlacedTowerOptions() {
+    if (this.selectedDroppedTowerIndex === undefined) return;
+
+    let selectedDroppedTower = this.towers[this.selectedDroppedTowerIndex];
+    if (selectedDroppedTower.curLevel === selectedDroppedTower.maxLevel) return;
+    this.context.beginPath();
+
+    this.context.fillStyle = "black";
+    this.context.font = "bold 16px sans-serif";
+    this.context.fillText(
+      "UPGRADE",
+      selectedDroppedTower.x,
+      selectedDroppedTower.y +
+        CellDimensions.HEIGHT +
+        selectedDroppedTower.height / 4
+    );
+    this.context.fillStyle = "maroon";
+    this.context.font = "bold 14px sans-serif";
+
+    this.context.fillText(
+      "DISMANTLE",
+      selectedDroppedTower.x,
+      selectedDroppedTower.y +
+        CellDimensions.HEIGHT +
+        selectedDroppedTower.height / 2
+    );
   }
 
   drawCoin() {
@@ -245,8 +276,9 @@ export default class Level1 {
     this.drawPath();
     this.drawGrid();
     this.drawEnemy();
-    this.drawSelectedTower();
+    this.drawSelectedAvailableTower();
     this.drawTowers();
+    this.drawSelectedPlacedTowerOptions();
   }
 
   update() {
@@ -293,13 +325,12 @@ export default class Level1 {
 
   drawAvailableTowers() {
     let i = 0;
-    for (let x = 9; x <= 10 && i < this.availableTowers.length; x++) {
+    for (let x = 9; x <= 12 && i < this.availableTowers.length; x++) {
       this.context.beginPath();
 
       //set property
       this.availableTowers[i].x = x * CellDimensions.WIDTH;
       this.availableTowers[i].y = CellDimensions.HEIGHT;
-
       //check collision for  stroke
       if (
         collision(this.mouse, {
@@ -329,18 +360,18 @@ export default class Level1 {
     }
   }
 
-  drawSelectedTower() {
+  drawSelectedAvailableTower() {
     let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
     let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
-    if (this.selectedTower === undefined || gridY < 2) return;
+    if (this.selectedAvailableTower === undefined || gridY < 2) return;
     this.context.beginPath();
     this.context.globalAlpha = 0.2;
     this.context.drawImage(
-      this.availableTowers[this.selectedTower].img,
-      gridX * this.availableTowers[this.selectedTower].width,
-      gridY * this.availableTowers[this.selectedTower].height,
-      this.availableTowers[this.selectedTower].width,
-      this.availableTowers[this.selectedTower].height
+      this.availableTowers[this.selectedAvailableTower].img,
+      gridX * this.availableTowers[this.selectedAvailableTower].width,
+      gridY * this.availableTowers[this.selectedAvailableTower].height,
+      this.availableTowers[this.selectedAvailableTower].width,
+      this.availableTowers[this.selectedAvailableTower].height
     );
     this.context.globalAlpha = 1;
     this.context.closePath();
@@ -349,6 +380,7 @@ export default class Level1 {
   handleMouse = (e: MouseEvent) => {
     this.mouse.x = e.offsetX;
     this.mouse.y = e.offsetY;
+    console.log(this.selectedDroppedTowerIndex);
   };
   createGrid() {
     for (
@@ -370,11 +402,11 @@ export default class Level1 {
     if (this.pathsPos.some((path) => path.x === gridX && path.y === gridY)) {
       return;
     }
-    if (this.selectedTower === undefined || gridY < 2) {
+    if (this.selectedAvailableTower === undefined || gridY < 2) {
       return;
     }
     let tower;
-    switch (this.selectedTower) {
+    switch (this.selectedAvailableTower) {
       case 0:
         tower = new CannonL1(
           gridX * CellDimensions.WIDTH,
@@ -389,10 +421,16 @@ export default class Level1 {
           this.context
         );
         break;
+      case 2:
+        tower = new MoonTower(
+          gridX * CellDimensions.WIDTH,
+          gridY * CellDimensions.HEIGHT,
+          this.context
+        );
     }
 
     this.towers.push(tower!);
-    this.selectedTower = undefined;
+    this.selectedAvailableTower = undefined;
   }
 
   drawGrid() {

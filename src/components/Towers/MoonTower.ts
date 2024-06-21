@@ -1,17 +1,20 @@
-import { CellDimensions } from "../constants/constants";
-import CannonHead from "../assets/tower/Cannon2.png";
-import CannonBase from "../assets/tower/Tower.png";
-import Projectile from "./Projectile";
-import ProjectileImg from "../assets/tower/Bullet_Cannon.png";
-import collision from "../utils/utils";
-export default class CannonL2 {
+import { CellDimensions } from "../../constants/constants";
+
+import MoonTowerImg from "../../assets/tower/RedMoonTower_free_idle_animation..png";
+import Projectile from "../Projectile";
+import ProjectileImg from "../../assets/tower/Bullet_Cannon.png";
+import collision from "../../utils/utils";
+export default class MoonTower {
   x: number;
   y: number;
+  cost: number;
+  srcX: number;
+  upgradeCost: number;
   width: number;
   height: number;
   context: CanvasRenderingContext2D;
-  baseImg: CanvasImageSource;
-  headImg: CanvasImageSource;
+  towerImg: CanvasImageSource;
+  frame: number;
   range: number;
   isLocked: boolean;
   targetEnemy: any;
@@ -25,16 +28,18 @@ export default class CannonL2 {
   constructor(x: number, y: number, context: CanvasRenderingContext2D) {
     this.x = x;
     this.y = y;
+    this.srcX = 0;
     this.context = context;
     this.range = 200;
+    this.cost = 100;
     this.isLocked = false;
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;
-    this.baseImg = new Image();
-    this.headImg = new Image();
-    this.baseImg.src = CannonBase;
-    this.headImg.src = CannonHead;
+    this.towerImg = new Image();
+    this.towerImg.src = MoonTowerImg;
+    this.frame = 0;
     this.lastFireTime = 0;
+    this.upgradeCost = 400;
     this.fireRate = 1000;
     this.projectiles = [];
     this.projectileImg = new Image();
@@ -46,51 +51,27 @@ export default class CannonL2 {
   draw() {
     //draw projectiles
     this.drawProjectiles();
-
+    let imgWidth = 100;
+    if (this.frame % 10 === 0) this.srcX = (this.srcX + 1) % 11;
     //draw tower
     this.context.beginPath();
     this.context.drawImage(
-      this.baseImg,
+      this.towerImg,
+      this.srcX * imgWidth,
+      40,
+      imgWidth,
+      imgWidth,
       this.x,
       this.y,
       this.width,
       this.height
     );
 
-    //rotating the tower head
-    if (this.isLocked && this.targetEnemy) {
-      const cannonCenterX = this.x + this.width / 2;
-      const cannonCenterY = this.y + this.height / 2;
-      const enemyCenterX = this.targetEnemy.x + this.targetEnemy.width / 2;
-      const enemyCenterY = this.targetEnemy.y + this.targetEnemy.height / 2;
-
-      const dx = enemyCenterX - cannonCenterX;
-      const dy = enemyCenterY - cannonCenterY;
-      const headAngle = Math.atan2(dy, dx);
-      this.context.save();
-      this.context.translate(cannonCenterX, cannonCenterY);
-      this.context.rotate(headAngle + Math.PI / 2);
-      this.context.drawImage(
-        this.headImg,
-        -this.width / 2.5,
-        -this.height / 2.5,
-        this.width / 1.3,
-        this.height / 1.3
-      );
-      this.context.restore();
-    } else {
-      this.context.drawImage(
-        this.headImg,
-        this.x + 10,
-        this.y,
-        this.width / 1.3,
-        this.height / 1.3
-      );
-    }
     this.context.closePath();
   }
 
   update(enemy: any) {
+    this.frame++;
     //calculate the distance
     const cannonCenterX = this.x + this.width / 2;
     const cannonCenterY = this.y + this.height / 2;
@@ -125,19 +106,6 @@ export default class CannonL2 {
           new Projectile(
             this.context,
             cannonCenterX,
-            cannonCenterY,
-            this.projectileSpeed,
-            10,
-            10,
-            this.damage,
-            this.projectileImg,
-            this.targetEnemy
-          )
-        );
-        this.projectiles.push(
-          new Projectile(
-            this.context,
-            cannonCenterX + 20,
             cannonCenterY,
             this.projectileSpeed,
             10,
