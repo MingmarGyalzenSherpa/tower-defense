@@ -17,6 +17,9 @@ export default class Projectile {
     width: number;
     height: number;
   };
+  prevTime: number;
+  timeRate: number;
+
   constructor(
     context: CanvasRenderingContext2D,
     x: number,
@@ -42,6 +45,9 @@ export default class Projectile {
     this.speed = speed;
     this.damage = damage;
     this.targetEnemy = targetEnemy;
+    this.prevTime = performance.now();
+    this.timeRate = 1000;
+
     //set initial unit vector
     this.unitVector = {
       x: 0,
@@ -52,7 +58,6 @@ export default class Projectile {
   draw(targetEnemy: any) {
     let enemyCenterX = targetEnemy.x + targetEnemy.width / 2;
     let enemyCenterY = targetEnemy.y + targetEnemy.height / 2;
-
     let projectileCenterX = this.x + this.width / 2;
     let projectileCenterY = this.y + this.height / 2;
     let dy = enemyCenterY - projectileCenterY;
@@ -73,7 +78,29 @@ export default class Projectile {
     this.context.closePath();
   }
   update() {
-    this.x += this.unitVector.x * this.speed;
-    this.y += this.unitVector.y * this.speed;
+    let curTime = performance.now();
+    let diff = curTime - this.prevTime;
+    this.prevTime = curTime;
+    if (this.targetEnemy) {
+      let enemyCenterX = this.targetEnemy.x + this.targetEnemy.width / 2;
+      let enemyCenterY = this.targetEnemy.y + this.targetEnemy.height / 2;
+      let towerCenterX = this.x + this.width / 2;
+      let towerCenterY = this.y + this.height / 2;
+      let vector = {
+        x: enemyCenterX - towerCenterX,
+        y: enemyCenterY - towerCenterY,
+      };
+
+      let dist = Math.hypot(vector.x, vector.y);
+      this.unitVector = {
+        x: vector.x / dist,
+        y: vector.y / dist,
+      };
+    }
+    this.x += this.unitVector.x * this.speed * diff;
+    this.y += this.unitVector.y * this.speed * diff;
+    console.log({ x: this.x, y: this.y });
   }
+
+  checkCollision() {}
 }

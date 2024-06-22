@@ -45,10 +45,10 @@ export default class Cannon {
     this.headImg.src = CannonHeadL1;
     this.lastFireTime = 0;
     this.upgradeCost = 400;
-    this.fireRate = 2000;
+    this.fireRate = 1500;
     this.projectiles = [];
     this.projectileImg = new Image();
-    this.projectileSpeed = 2;
+    this.projectileSpeed = 0.2;
     this.damage = 50;
     this.projectileImg.src = ProjectileImg;
     this.numberOfProjectilePerFire = 1;
@@ -178,6 +178,7 @@ export default class Cannon {
   }
 
   drawProjectiles() {
+    console.log(this.projectiles);
     for (let i = 0; i < this.projectiles.length; i++) {
       if (this.isLocked) this.projectiles[i].draw(this.targetEnemy);
     }
@@ -185,26 +186,26 @@ export default class Cannon {
 
   updateProjectiles() {
     let unitVector;
-    if (this.targetEnemy) {
-      let enemyCenterX = this.targetEnemy.x + this.targetEnemy.width / 2;
-      let enemyCenterY = this.targetEnemy.y + this.targetEnemy.height / 2;
-      let towerCenterX = this.x + this.width / 2;
-      let towerCenterY = this.y + this.height / 2;
-      let vector = {
-        x: enemyCenterX - towerCenterX,
-        y: enemyCenterY - towerCenterY,
-      };
+    // if (this.targetEnemy) {
+    //   let enemyCenterX = this.targetEnemy.x + this.targetEnemy.width / 2;
+    //   let enemyCenterY = this.targetEnemy.y + this.targetEnemy.height / 2;
+    //   let towerCenterX = this.x + this.width / 2;
+    //   let towerCenterY = this.y + this.height / 2;
+    //   let vector = {
+    //     x: enemyCenterX - towerCenterX,
+    //     y: enemyCenterY - towerCenterY,
+    //   };
 
-      let dist = Math.hypot(vector.x, vector.y);
-      unitVector = {
-        x: vector.x / dist,
-        y: vector.y / dist,
-      };
-    }
+    //   let dist = Math.hypot(vector.x, vector.y);
+    //   unitVector = {
+    //     x: vector.x / dist,
+    //     y: vector.y / dist,
+    //   };
+    // }
     for (let i = 0; i < this.projectiles.length; i++) {
-      if (this.targetEnemy) {
-        this.projectiles[i].unitVector = unitVector!;
-      }
+      // if (this.targetEnemy) {
+      //   this.projectiles[i].unitVector = unitVector!;
+      // }
       this.projectiles[i].update();
     }
   }

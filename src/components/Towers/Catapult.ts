@@ -47,7 +47,7 @@ export default class Catapult {
     this.fireRate = 4000;
     this.projectiles = [];
     this.projectileImg = new Image();
-    this.projectileSpeed = 2;
+    this.projectileSpeed = 1;
     this.damage = 50;
     this.projectileImg.src = ProjectileImg;
     this.numberOfProjectilePerFire = 1;
@@ -143,8 +143,8 @@ export default class Catapult {
               cannonCenterX + i * 20,
               cannonCenterY,
               this.projectileSpeed,
-              10,
-              10,
+              20,
+              20,
               this.damage,
               this.projectileImg,
               this.targetEnemy
