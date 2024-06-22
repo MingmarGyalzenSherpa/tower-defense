@@ -55,8 +55,6 @@ export default class MachineGun {
   }
 
   draw() {
-    console.log(this.projectileSpeed);
-
     //draw tower
     this.context.beginPath();
     this.context.drawImage(
@@ -145,7 +143,6 @@ export default class MachineGun {
       //current time
       const curTime = performance.now();
       if (curTime - this.lastFireTime >= this.fireRate) {
-        console.log("firing");
         for (let i = 0; i < this.numberOfProjectilePerFire; i++) {
           this.projectiles.push(
             new Projectile(

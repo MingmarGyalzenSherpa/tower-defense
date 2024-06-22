@@ -239,11 +239,13 @@ export default class Level1 {
         })
       ) {
         this.selectedDroppedTowerIndex = i;
-      } else {
+        break;
+      } else if (i === this.towers.length - 1) {
         this.selectedDroppedTowerIndex = undefined;
-        console.log("huhu");
       }
     }
+
+    console.log(this.selectedDroppedTowerIndex);
   }
 
   handlePlaceTowersOptionClick() {
@@ -268,6 +270,22 @@ export default class Level1 {
       this.towers.splice(this.selectedDroppedTowerIndex!, 1);
       this.selectedDroppedTowerIndex = undefined;
     }
+  }
+
+  drawSelectedPlacedTowerRange() {
+    if (this.selectedDroppedTowerIndex === undefined) return;
+    let selectedDroppedTower = this.towers[this.selectedDroppedTowerIndex];
+    let range = selectedDroppedTower.range;
+    let cx = selectedDroppedTower.x + selectedDroppedTower.width / 2;
+    let cy = selectedDroppedTower.y + selectedDroppedTower.height / 2;
+    this.context.beginPath();
+    this.context.fillStyle = "red";
+    this.context.save();
+    this.context.globalAlpha = 0.5;
+    this.context.arc(cx, cy, range, 0, 2 * Math.PI);
+    this.context.fill();
+    this.context.restore();
+    this.context.closePath();
   }
 
   drawSelectedPlacedTowerOptions() {
@@ -375,6 +393,7 @@ export default class Level1 {
     this.drawGrid();
     this.drawSelectedAvailableTower();
     this.drawTowers();
+    this.drawSelectedPlacedTowerRange();
     this.drawSelectedPlacedTowerOptions();
     this.drawEnemy();
   }

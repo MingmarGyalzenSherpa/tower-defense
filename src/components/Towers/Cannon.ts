@@ -55,7 +55,6 @@ export default class Cannon {
   }
 
   draw() {
-    console.log(this.projectileSpeed);
     //draw projectiles
     this.drawProjectiles();
 
@@ -145,7 +144,6 @@ export default class Cannon {
       //current time
       const curTime = performance.now();
       if (curTime - this.lastFireTime >= this.fireRate) {
-        console.log("firing");
         for (let i = 0; i < this.numberOfProjectilePerFire; i++) {
           this.projectiles.push(
             new Projectile(

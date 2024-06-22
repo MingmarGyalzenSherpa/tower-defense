@@ -1,7 +1,7 @@
 import { CellDimensions } from "../../constants/constants";
 import CatapultImg from "../../assets/tower/tower-pulley.png";
 import Projectile from "../Projectile";
-import ProjectileImg from "../../assets/tower/Bullet_Cannon.png";
+import ProjectileImg from "../../assets/tower/projectile.png";
 import collision from "../../utils/utils";
 export default class Catapult {
   x: number;
@@ -33,7 +33,7 @@ export default class Catapult {
     this.context = context;
     this.curLevel = 1;
     this.maxLevel = 1;
-    this.range = 200;
+    this.range = 300;
     this.cost = 100;
     this.isLocked = false;
     this.width = CellDimensions.WIDTH;
@@ -44,7 +44,7 @@ export default class Catapult {
     this.srcX = 0;
     this.lastFireTime = 0;
     this.upgradeCost = 400;
-    this.fireRate = 2000;
+    this.fireRate = 4000;
     this.projectiles = [];
     this.projectileImg = new Image();
     this.projectileSpeed = 2;
@@ -60,12 +60,11 @@ export default class Catapult {
     let imgWidth = 128;
 
     //draw tower
+    if (this.frame % 50 === 0) {
+      this.srcX = (this.srcX + 1) % 18;
+    }
     this.context.beginPath();
     if (this.isLocked) {
-      console.log(this.isLocked);
-      if (this.frame % 10 === 0) {
-        this.srcX = (this.srcX + 1) % 18;
-      }
       this.context.drawImage(
         this.towerImg,
         this.srcX * imgWidth,
@@ -137,7 +136,6 @@ export default class Catapult {
       //current time
       const curTime = performance.now();
       if (curTime - this.lastFireTime >= this.fireRate) {
-        console.log("firing");
         for (let i = 0; i < this.numberOfProjectilePerFire; i++) {
           this.projectiles.push(
             new Projectile(
