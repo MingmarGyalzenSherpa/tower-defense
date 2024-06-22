@@ -31,6 +31,20 @@ export default class Level1 {
   moonTower: IAvailableTower;
   coinImg: CanvasImageSource;
   towers: any[];
+  selectedPlacedTowerOptions: {
+    upgrade: {
+      x?: number;
+      y?: number;
+      width: number;
+      height: number;
+    };
+    break: {
+      x?: number;
+      y?: number;
+      width: number;
+      height: number;
+    };
+  };
   selectedAvailableTower?: number;
   selectedDroppedTowerIndex?: number;
   enemies: any[];
@@ -70,6 +84,17 @@ export default class Level1 {
     this.availableTowers.push(this.cannonL1Tower);
     this.availableTowers.push(this.cannonL2Tower);
     this.availableTowers.push(this.moonTower);
+
+    this.selectedPlacedTowerOptions = {
+      upgrade: {
+        width: CellDimensions.WIDTH,
+        height: CellDimensions.HEIGHT / 3,
+      },
+      break: {
+        width: CellDimensions.WIDTH,
+        height: CellDimensions.HEIGHT / 3,
+      },
+    };
 
     this.towers = [];
     //positions for path
@@ -186,6 +211,9 @@ export default class Level1 {
     //place tower
     this.placeTower();
 
+    //handle placed tower options clicked
+    this.handlePlaceTowersOptionClick();
+
     this.handlePlacedTowerClick();
   };
 
@@ -200,7 +228,34 @@ export default class Level1 {
         })
       ) {
         this.selectedDroppedTowerIndex = i;
+      } else {
+        this.selectedDroppedTowerIndex = undefined;
+        console.log("huhu");
       }
+    }
+  }
+
+  handlePlaceTowersOptionClick() {
+    if (
+      collision(this.mouse, {
+        ...this.selectedPlacedTowerOptions.upgrade,
+        x: this.selectedPlacedTowerOptions.upgrade.x!,
+        y: this.selectedPlacedTowerOptions.upgrade.y!,
+      })
+    ) {
+      console.log("hehe");
+      this.towers[this.selectedDroppedTowerIndex!].upgrade();
+    }
+
+    if (
+      collision(this.mouse, {
+        ...this.selectedPlacedTowerOptions.break,
+        x: this.selectedPlacedTowerOptions.break.x!,
+        y: this.selectedPlacedTowerOptions.break.y!,
+      })
+    ) {
+      this.towers.splice(this.selectedDroppedTowerIndex!, 1);
+      this.selectedDroppedTowerIndex = undefined;
     }
   }
 
@@ -209,10 +264,30 @@ export default class Level1 {
 
     let selectedDroppedTower = this.towers[this.selectedDroppedTowerIndex];
     if (selectedDroppedTower.curLevel === selectedDroppedTower.maxLevel) return;
-    this.context.beginPath();
 
+    //update the x,y of selectedPlacedTowerOptions
+    this.selectedPlacedTowerOptions.upgrade.x = selectedDroppedTower.x;
+    this.selectedPlacedTowerOptions.upgrade.y =
+      selectedDroppedTower.y + CellDimensions.HEIGHT;
+
+    this.selectedPlacedTowerOptions.break.x = selectedDroppedTower.x;
+    this.selectedPlacedTowerOptions.break.y =
+      this.selectedPlacedTowerOptions.upgrade.y! +
+      this.selectedPlacedTowerOptions.upgrade.height;
+
+    this.context.beginPath();
+    this.context.fillStyle = "green";
+    this.context.fillRect(
+      this.selectedPlacedTowerOptions.upgrade.x!,
+      this.selectedPlacedTowerOptions.upgrade.y!,
+      this.selectedPlacedTowerOptions.upgrade.width,
+      this.selectedPlacedTowerOptions.upgrade.height
+    );
+    this.context.closePath();
+
+    this.context.beginPath();
     this.context.fillStyle = "black";
-    this.context.font = "bold 16px sans-serif";
+    this.context.font = "bold 14px Audiowide";
     this.context.fillText(
       "UPGRADE",
       selectedDroppedTower.x,
@@ -220,11 +295,23 @@ export default class Level1 {
         CellDimensions.HEIGHT +
         selectedDroppedTower.height / 4
     );
-    this.context.fillStyle = "maroon";
-    this.context.font = "bold 14px sans-serif";
+
+    this.context.closePath();
+
+    this.context.beginPath();
+    this.context.fillStyle = "red";
+    this.context.fillRect(
+      this.selectedPlacedTowerOptions.break.x!,
+      this.selectedPlacedTowerOptions.break.y!,
+      this.selectedPlacedTowerOptions.break.width,
+      this.selectedPlacedTowerOptions.break.height
+    );
+    this.context.closePath();
+    this.context.font = "bold 14px Audiowide";
+    this.context.fillStyle = "black";
 
     this.context.fillText(
-      "DISMANTLE",
+      "BREAK",
       selectedDroppedTower.x,
       selectedDroppedTower.y +
         CellDimensions.HEIGHT +
@@ -275,10 +362,10 @@ export default class Level1 {
     this.drawBackground();
     this.drawPath();
     this.drawGrid();
-    this.drawEnemy();
     this.drawSelectedAvailableTower();
     this.drawTowers();
     this.drawSelectedPlacedTowerOptions();
+    this.drawEnemy();
   }
 
   update() {
@@ -322,10 +409,10 @@ export default class Level1 {
       this.towers[i].draw();
     }
   }
-/**
- * The `drawAvailableTowers` function iterates through available towers, sets their properties, checks
- * for collision with the mouse, and draws the towers on a canvas.
- */
+  /**
+   * The `drawAvailableTowers` function iterates through available towers, sets their properties, checks
+   * for collision with the mouse, and draws the towers on a canvas.
+   */
   drawAvailableTowers() {
     let i = 0;
     for (let x = 9; x <= 12 && i < this.availableTowers.length; x++) {
@@ -386,13 +473,12 @@ export default class Level1 {
     this.context.closePath();
   }
 
-/* The below code is a TypeScript method called `handleMouse` that takes a MouseEvent as a parameter.
+  /* The method called `handleMouse` that takes a MouseEvent as a parameter.
 Inside the method, it updates the x and y coordinates of a `mouse` object based on the offsetX and
 offsetY properties of the MouseEvent. */
   handleMouse = (e: MouseEvent) => {
     this.mouse.x = e.offsetX;
     this.mouse.y = e.offsetY;
-    console.log(this.selectedDroppedTowerIndex);
   };
   createGrid() {
     for (

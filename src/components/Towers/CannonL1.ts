@@ -1,5 +1,6 @@
 import { CellDimensions } from "../../constants/constants";
-import CannonHead from "../../assets/tower/Cannon.png";
+import CannonHeadL1 from "../../assets/tower/Cannon.png";
+import CannonHeadL2 from "../../assets/tower/Cannon2.png";
 import CannonBase from "../../assets/tower/Tower.png";
 import Projectile from "../Projectile";
 import ProjectileImg from "../../assets/tower/Bullet_Cannon.png";
@@ -11,6 +12,7 @@ export default class CannonL1 {
   upgradeCost: number;
   curLevel: number;
   maxLevel: number;
+  numberOfProjectilePerFire: number;
   width: number;
   height: number;
   context: CanvasRenderingContext2D;
@@ -40,15 +42,16 @@ export default class CannonL1 {
     this.baseImg = new Image();
     this.headImg = new Image();
     this.baseImg.src = CannonBase;
-    this.headImg.src = CannonHead;
+    this.headImg.src = CannonHeadL1;
     this.lastFireTime = 0;
     this.upgradeCost = 400;
-    this.fireRate = 1000;
+    this.fireRate = 2000;
     this.projectiles = [];
     this.projectileImg = new Image();
     this.projectileSpeed = 2;
     this.damage = 50;
     this.projectileImg.src = ProjectileImg;
+    this.numberOfProjectilePerFire = 1;
   }
 
   draw() {
@@ -98,6 +101,19 @@ export default class CannonL1 {
     this.context.closePath();
   }
 
+  upgrade() {
+    switch (this.curLevel) {
+      case 1:
+        this.numberOfProjectilePerFire = 2;
+        this.fireRate = 1500;
+        this.headImg = new Image();
+        this.headImg.src = CannonHeadL2;
+        break;
+      case 2:
+        break;
+    }
+  }
+
   update(enemy: any) {
     //calculate the distance
     const cannonCenterX = this.x + this.width / 2;
@@ -129,19 +145,22 @@ export default class CannonL1 {
       const curTime = performance.now();
       if (curTime - this.lastFireTime >= this.fireRate) {
         console.log("firing");
-        this.projectiles.push(
-          new Projectile(
-            this.context,
-            cannonCenterX,
-            cannonCenterY,
-            this.projectileSpeed,
-            10,
-            10,
-            this.damage,
-            this.projectileImg,
-            this.targetEnemy
-          )
-        );
+        for (let i = 0; i < this.numberOfProjectilePerFire; i++) {
+          this.projectiles.push(
+            new Projectile(
+              this.context,
+              cannonCenterX + i * 20,
+              cannonCenterY,
+              this.projectileSpeed,
+              10,
+              10,
+              this.damage,
+              this.projectileImg,
+              this.targetEnemy
+            )
+          );
+        }
+
         this.lastFireTime = curTime;
       }
     }
