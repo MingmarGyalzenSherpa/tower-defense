@@ -6,11 +6,13 @@ import Tiles from "../assets/tileset/tileset.png";
 import Orc from "./Enemies/Orc";
 import MoonTowerImg from "../assets/tower/redmoon_showcase.png";
 import CannonL1TowerHead from "../assets/tower/Cannon.png";
-import CannonL1 from "./Towers/CannonL1";
-import CannonL2TowerHead from "../assets/tower/Cannon2.png";
-import CannonL2 from "./Towers/CannonL2";
+import MachineGunTowerHead from "../assets/tower/MG.png";
+import CatapultTowerImg from "../assets/tower/tower-pulley_showcase.png";
+import Cannon from "./Towers/Cannon";
+import MachineGun from "./Towers/MachineGun";
 import CoinImg from "../assets/coin.png";
 import MoonTower from "./Towers/MoonTower";
+import Catapult from "./Towers/Catapult";
 interface IAvailableTower {
   x?: number;
   y?: number;
@@ -27,7 +29,8 @@ export default class Level1 {
   mouse: Mouse;
   frame: number;
   cannonL1Tower: IAvailableTower;
-  cannonL2Tower: IAvailableTower;
+  machineGunTower: IAvailableTower;
+  catapultTower: IAvailableTower;
   moonTower: IAvailableTower;
   coinImg: CanvasImageSource;
   towers: any[];
@@ -67,8 +70,7 @@ export default class Level1 {
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
     };
-    this.cannonL1Tower.img.src = CannonL1TowerHead;
-    this.cannonL2Tower = {
+    this.machineGunTower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
@@ -78,12 +80,21 @@ export default class Level1 {
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
     };
+    this.catapultTower = {
+      img: new Image(),
+      width: CellDimensions.WIDTH,
+      height: CellDimensions.HEIGHT,
+    };
+
+    this.catapultTower.img.src = CatapultTowerImg;
+    this.cannonL1Tower.img.src = CannonL1TowerHead;
     this.moonTower.img.src = MoonTowerImg;
-    this.cannonL2Tower.img.src = CannonL2TowerHead;
+    this.machineGunTower.img.src = MachineGunTowerHead;
     this.availableTowers = [];
     this.availableTowers.push(this.cannonL1Tower);
-    this.availableTowers.push(this.cannonL2Tower);
+    this.availableTowers.push(this.machineGunTower);
     this.availableTowers.push(this.moonTower);
+    this.availableTowers.push(this.catapultTower);
 
     this.selectedPlacedTowerOptions = {
       upgrade: {
@@ -415,7 +426,7 @@ export default class Level1 {
    */
   drawAvailableTowers() {
     let i = 0;
-    for (let x = 9; x <= 12 && i < this.availableTowers.length; x++) {
+    for (let x = 5; x <= 12 && i < this.availableTowers.length; x++) {
       this.context.beginPath();
 
       //set property
@@ -505,6 +516,7 @@ offsetY properties of the MouseEvent. */
       return;
     }
 
+    //if co-ordinate matches already placed towers
     if (
       this.towers.some((tower) => {
         let towerGridX = Math.floor(tower.x / CellDimensions.WIDTH);
@@ -518,14 +530,14 @@ offsetY properties of the MouseEvent. */
     let tower;
     switch (this.selectedAvailableTower) {
       case 0:
-        tower = new CannonL1(
+        tower = new Cannon(
           gridX * CellDimensions.WIDTH,
           gridY * CellDimensions.HEIGHT,
           this.context
         );
         break;
       case 1:
-        tower = new CannonL2(
+        tower = new MachineGun(
           gridX * CellDimensions.WIDTH,
           gridY * CellDimensions.HEIGHT,
           this.context
@@ -537,6 +549,14 @@ offsetY properties of the MouseEvent. */
           gridY * CellDimensions.HEIGHT,
           this.context
         );
+        break;
+      case 3:
+        tower = new Catapult(
+          gridX * CellDimensions.WIDTH,
+          gridY * CellDimensions.HEIGHT,
+          this.context
+        );
+        break;
     }
 
     this.towers.push(tower!);

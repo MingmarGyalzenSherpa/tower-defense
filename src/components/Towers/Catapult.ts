@@ -1,11 +1,9 @@
 import { CellDimensions } from "../../constants/constants";
-import CannonHeadL1 from "../../assets/tower/Cannon.png";
-import CannonHeadL2 from "../../assets/tower/Cannon2.png";
-import CannonBase from "../../assets/tower/Tower.png";
+import CatapultImg from "../../assets/tower/tower-pulley.png";
 import Projectile from "../Projectile";
 import ProjectileImg from "../../assets/tower/Bullet_Cannon.png";
 import collision from "../../utils/utils";
-export default class CannonL1 {
+export default class Catapult {
   x: number;
   y: number;
   cost: number;
@@ -16,10 +14,11 @@ export default class CannonL1 {
   width: number;
   height: number;
   context: CanvasRenderingContext2D;
-  baseImg: CanvasImageSource;
-  headImg: CanvasImageSource;
+  towerImg: CanvasImageSource;
   range: number;
+  frame: number;
   isLocked: boolean;
+  srcX: number;
   targetEnemy: any;
   prevTargetEnemy: any;
   lastFireTime: number;
@@ -33,16 +32,16 @@ export default class CannonL1 {
     this.y = y;
     this.context = context;
     this.curLevel = 1;
-    this.maxLevel = 2;
+    this.maxLevel = 1;
     this.range = 200;
     this.cost = 100;
     this.isLocked = false;
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;
-    this.baseImg = new Image();
-    this.headImg = new Image();
-    this.baseImg.src = CannonBase;
-    this.headImg.src = CannonHeadL1;
+    this.towerImg = new Image();
+    this.towerImg.src = CatapultImg;
+    this.frame = 0;
+    this.srcX = 0;
     this.lastFireTime = 0;
     this.upgradeCost = 400;
     this.fireRate = 2000;
@@ -58,63 +57,57 @@ export default class CannonL1 {
     //draw projectiles
     this.drawProjectiles();
 
+    let imgWidth = 128;
+
     //draw tower
     this.context.beginPath();
-    this.context.drawImage(
-      this.baseImg,
-      this.x,
-      this.y,
-      this.width,
-      this.height
-    );
-
-    //rotating the tower head
-    if (this.isLocked && this.targetEnemy) {
-      const cannonCenterX = this.x + this.width / 2;
-      const cannonCenterY = this.y + this.height / 2;
-      const enemyCenterX = this.targetEnemy.x + this.targetEnemy.width / 2;
-      const enemyCenterY = this.targetEnemy.y + this.targetEnemy.height / 2;
-
-      const dx = enemyCenterX - cannonCenterX;
-      const dy = enemyCenterY - cannonCenterY;
-      const headAngle = Math.atan2(dy, dx);
-      this.context.save();
-      this.context.translate(cannonCenterX, cannonCenterY);
-      this.context.rotate(headAngle + Math.PI / 2);
+    if (this.isLocked) {
+      console.log(this.isLocked);
+      if (this.frame % 10 === 0) {
+        this.srcX = (this.srcX + 1) % 18;
+      }
       this.context.drawImage(
-        this.headImg,
-        -this.width / 2.5,
-        -this.height / 2.5,
-        this.width / 1.3,
-        this.height / 1.3
+        this.towerImg,
+        this.srcX * imgWidth,
+        0,
+        imgWidth,
+        150,
+        this.x,
+        this.y,
+        this.width,
+        this.height
       );
-      this.context.restore();
     } else {
       this.context.drawImage(
-        this.headImg,
-        this.x + 10,
+        this.towerImg,
+        0,
+        0,
+        imgWidth,
+        150,
+        this.x,
         this.y,
-        this.width / 1.3,
-        this.height / 1.3
+        this.width,
+        this.height
       );
     }
+
     this.context.closePath();
   }
 
-  upgrade() {
-    switch (this.curLevel) {
-      case 1:
-        this.numberOfProjectilePerFire = 2;
-        this.fireRate = 1500;
-        this.headImg = new Image();
-        this.headImg.src = CannonHeadL2;
-        break;
-      case 2:
-        break;
-    }
-  }
+  //   upgrade() {
+  //     switch (this.curLevel) {
+  //       case 1:
+  //         this.numberOfProjectilePerFire = 1;
+  //         this.fireRate = 1500;
+
+  //         break;
+  //       case 2:
+  //         break;
+  //     }
+  //   }
 
   update(enemy: any) {
+    this.frame++;
     //calculate the distance
     const cannonCenterX = this.x + this.width / 2;
     const cannonCenterY = this.y + this.height / 2;
