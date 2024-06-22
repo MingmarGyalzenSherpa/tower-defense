@@ -331,12 +331,12 @@ export default class Level1 {
       CellDimensions.WIDTH,
       CellDimensions.HEIGHT
     );
-    this.context.font = "20px sans-serif";
+    this.context.font = "20px Audiowide";
     this.context.fillStyle = "black";
     this.context.fillText(
       `Coins: ${this.coin}`,
       offsetX + CellDimensions.WIDTH,
-      offsetY + CellDimensions.HEIGHT / 2
+      offsetY + CellDimensions.HEIGHT / 1.5
     );
     this.context.closePath();
   }
@@ -500,7 +500,19 @@ offsetY properties of the MouseEvent. */
     if (this.pathsPos.some((path) => path.x === gridX && path.y === gridY)) {
       return;
     }
+    //if the co-ordinates are outside the ground
     if (this.selectedAvailableTower === undefined || gridY < 2) {
+      return;
+    }
+
+    if (
+      this.towers.some((tower) => {
+        let towerGridX = Math.floor(tower.x / CellDimensions.WIDTH);
+        let towerGridY = Math.floor(tower.y / CellDimensions.HEIGHT);
+        return towerGridX === gridX && towerGridY === gridY;
+      })
+    ) {
+      this.selectedAvailableTower = undefined;
       return;
     }
     let tower;
