@@ -15,6 +15,7 @@ export const CanvasDimension = {
 
 export enum GameState {
   WAITING = "Waiting",
+  MENU = "Menu",
   PLAYING = "Playing",
   PAUSED = "Paused",
   OVER = "Over",

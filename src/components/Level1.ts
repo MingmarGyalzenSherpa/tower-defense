@@ -322,7 +322,10 @@ export default class Level1 {
       this.towers[i].draw();
     }
   }
-
+/**
+ * The `drawAvailableTowers` function iterates through available towers, sets their properties, checks
+ * for collision with the mouse, and draws the towers on a canvas.
+ */
   drawAvailableTowers() {
     let i = 0;
     for (let x = 9; x <= 12 && i < this.availableTowers.length; x++) {
@@ -360,6 +363,12 @@ export default class Level1 {
     }
   }
 
+  /**
+   * The function `drawSelectedAvailableTower` draws a selected available tower image on a grid based
+   * on mouse position.
+   * @returns If the `selectedAvailableTower` is undefined or if `gridY` is less than 2, the function
+   * will return early and not draw anything on the canvas.
+   */
   drawSelectedAvailableTower() {
     let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
     let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
@@ -377,6 +386,9 @@ export default class Level1 {
     this.context.closePath();
   }
 
+/* The below code is a TypeScript method called `handleMouse` that takes a MouseEvent as a parameter.
+Inside the method, it updates the x and y coordinates of a `mouse` object based on the offsetX and
+offsetY properties of the MouseEvent. */
   handleMouse = (e: MouseEvent) => {
     this.mouse.x = e.offsetX;
     this.mouse.y = e.offsetY;
