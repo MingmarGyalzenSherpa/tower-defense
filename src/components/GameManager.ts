@@ -24,7 +24,7 @@ export default class GameManager {
     this.context = context;
     this.mouse = new Mouse();
     this.context.fillStyle = "black";
-    this.gameState = GameState.PLAYING;
+    this.gameState = GameState.WAITING;
     this.startBtn = {
       x: CanvasDimension.WIDTH / 2.5,
       y: CanvasDimension.HEIGHT / 2.5,
@@ -53,7 +53,33 @@ export default class GameManager {
 
   handleClick = () => {
     this.clickStartBtn();
+    this.handleMenuClick();
   };
+
+  handleMenuClick() {
+    if (this.gameState !== GameState.MENU) return;
+    console.log("hey wassup");
+    for (let i = 0; i < this.levels.length; i++) {
+      if (
+        collision(this.mouse, {
+          x: this.levels[i].x!,
+          y: this.levels[i].y!,
+          width: this.levels[i].width!,
+          height: this.levels[i].height!,
+        })
+      ) {
+        switch (i) {
+          case 0:
+            this.curLevel = new Level1(this.canvas, this.context);
+            this.gameState = GameState.PLAYING;
+            break;
+
+          case 1:
+            break;
+        }
+      }
+    }
+  }
 
   clickStartBtn() {
     if (
@@ -96,7 +122,6 @@ export default class GameManager {
     this.context.fillStyle = "black";
     this.context.fillRect(0, 0, CanvasDimension.WIDTH, CanvasDimension.HEIGHT);
     this.context.closePath();
-
     this.context.beginPath();
     this.context.drawImage(
       this.startBtn.img!,
@@ -125,13 +150,13 @@ export default class GameManager {
       this.levels[i].y = y;
       this.levels[i].width = width;
       this.levels[i].height = height;
-      // this.context.drawImage(
-      //   this.levelBg,
-      //   this.levels[i].x,
-      //   this.levels[i].y,
-      //   this.levels[i].width,
-      //   this.levels[i].height
-      // );
+      this.context.drawImage(
+        this.levelBg,
+        this.levels[i].x!,
+        this.levels[i].y!,
+        this.levels[i].width!,
+        this.levels[i].height!
+      );
       this.context.font = "20px Audiowide";
       this.context.fillStyle = "black";
       this.context.fillText(
