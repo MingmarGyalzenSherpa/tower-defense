@@ -195,9 +195,7 @@ export default class Level1 {
         y: 5,
       },
     ];
-    this.enemies.push(
-      new Orc(this.context, this.pathsPos[0].y * CellDimensions.HEIGHT)
-    );
+
     this.createGrid();
     this.drawGrid();
     this.canvas.addEventListener("mousemove", this.handleMouse);
@@ -372,9 +370,7 @@ export default class Level1 {
 
   generateEnemy() {
     if (this.frame % 200 === 0 && this.frame % 600 != 0) {
-      this.enemies.push(
-        new Orc(this.context, this.pathsPos[0].y * CellDimensions.HEIGHT)
-      );
+      this.enemies.push(new Orc(this.context, this.pathsPos));
     }
   }
 

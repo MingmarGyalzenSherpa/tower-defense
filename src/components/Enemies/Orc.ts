@@ -10,19 +10,27 @@ export default class Orc {
   hp: number;
   maxHp: number;
   coinGain: number;
-  curPath: number;
-  nextPath: number;
+  prevPath?: { x: number; y: number };
+  targetPath?: { x: number; y: number };
   context: CanvasRenderingContext2D;
   img: CanvasImageSource;
   srcX: number;
   imgWidth: number;
   frame: number;
-  constructor(context: CanvasRenderingContext2D, y: number) {
+  pathPos: { x: number; y: number }[];
+  constructor(
+    context: CanvasRenderingContext2D,
+
+    pathPos: { x: number; y: number }[]
+  ) {
     this.context = context;
-    this.curPath = -1;
-    this.nextPath = 0;
+    //set x to -50
     this.x = -50;
-    this.y = y;
+    //set y to path whose x is 0
+    let startingPath = pathPos.find((path) => path.x === 0);
+    if (startingPath) {
+      this.y = startingPath.y;
+    }
     this.dy = 0;
     this.dx = 0.25;
     this.coinGain = 20;
@@ -35,6 +43,7 @@ export default class Orc {
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;
     this.frame = 0;
+    this.pathPos = pathPos;
   }
 
   getHp(): number {
@@ -88,6 +97,15 @@ export default class Orc {
 
   update(pathPos: { x: number; y: number }[]) {
     this.frame++;
+
+    let nextX, nextY;
+    if (this.x != this.targetPath?.x && this.y != this.targetPath?.y) {
+      nextX = this.x;
+      nextY = this.y;
+      //search left
+      
+    }
+
     let targetX = pathPos[this.nextPath].x * CellDimensions.WIDTH;
     let targetY = pathPos[this.nextPath].y * CellDimensions.HEIGHT;
 
