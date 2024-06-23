@@ -5,7 +5,13 @@ import StartBtnImg from "../assets/start-btn.png";
 import collision from "../utils/utils";
 import LevelBg from "../assets/levelBackground.png";
 export default class GameManager {
-  levels: { x?: number; y?: number; width?: number; height?: number }[];
+  levels: {
+    x?: number;
+    y?: number;
+    width?: number;
+    height?: number;
+    color: string;
+  }[];
   levelBg: CanvasImageSource;
   context: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
@@ -49,6 +55,24 @@ export default class GameManager {
     if (this.gameState === GameState.PLAYING) return;
     this.mouse.x = e.offsetX;
     this.mouse.y = e.offsetY;
+
+    if (this.gameState === GameState.MENU) {
+      for (let i = 0; i < this.levels.length; i++) {
+        if (
+          collision(this.mouse, {
+            x: this.levels[i].x!,
+            y: this.levels[i].y!,
+            width: this.levels[i].width!,
+            height: this.levels[i].height!,
+          })
+        ) {
+          console.log("true");
+          this.levels[i].color = "green";
+        } else {
+          this.levels[i].color = "white";
+        }
+      }
+    }
   };
 
   handleClick = () => {
@@ -145,20 +169,20 @@ export default class GameManager {
       height = 100;
     for (let i = 0; i < this.levels.length; i++) {
       this.context.beginPath();
-      this.context.fillStyle = "green";
       this.levels[i].x = x + (width + gap) * i;
       this.levels[i].y = y;
       this.levels[i].width = width;
       this.levels[i].height = height;
-      this.context.drawImage(
-        this.levelBg,
-        this.levels[i].x!,
-        this.levels[i].y!,
-        this.levels[i].width!,
-        this.levels[i].height!
-      );
+      // this.context.drawImage(
+      //   this.levelBg,
+      //   this.levels[i].x!,
+      //   this.levels[i].y!,
+      //   this.levels[i].width!,
+      //   this.levels[i].height!
+      // );
+      console.log(this.levels[i]);
       this.context.font = "20px Audiowide";
-      this.context.fillStyle = "black";
+      this.context.fillStyle = this.levels[i].color;
       this.context.fillText(
         `${i === this.levels.length - 1 ? "Wave mode" : `Level ${i + 1}`}`,
         x + 50 + (width + gap) * i,
