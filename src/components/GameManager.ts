@@ -41,7 +41,13 @@ export default class GameManager {
     this.startBtn.img.src = StartBtnImg;
     this.levels = [];
     for (let i = 0; i < 3; i++) {
-      this.levels.push({});
+      this.levels.push({
+        x: undefined,
+        y: undefined,
+        width: undefined,
+        height: undefined,
+        color: "white",
+      });
     }
     this.levelBg = new Image();
     this.levelBg.src = LevelBg;
@@ -173,13 +179,7 @@ export default class GameManager {
       this.levels[i].y = y;
       this.levels[i].width = width;
       this.levels[i].height = height;
-      // this.context.drawImage(
-      //   this.levelBg,
-      //   this.levels[i].x!,
-      //   this.levels[i].y!,
-      //   this.levels[i].width!,
-      //   this.levels[i].height!
-      // );
+
       console.log(this.levels[i]);
       this.context.font = "20px Audiowide";
       this.context.fillStyle = this.levels[i].color;
