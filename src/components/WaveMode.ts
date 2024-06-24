@@ -55,6 +55,12 @@ export default class WaveMode {
       height: number;
     };
   };
+  startBtn: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
   selectedAvailableTower?: number;
   selectedDroppedTowerIndex?: number;
   enemies: any[];
@@ -63,6 +69,12 @@ export default class WaveMode {
   waveModeState: WaveModeState;
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
     this.waveModeState = WaveModeState.EDITOR;
+    this.startBtn = {
+      x: CanvasDimension.WIDTH / 2 - 100,
+      y: CellDimensions.HEIGHT,
+      width: CellDimensions.WIDTH * 2,
+      height: 50,
+    };
     this.canvas = canvas;
     this.context = context;
     this.mouse = new Mouse();
@@ -141,7 +153,15 @@ export default class WaveMode {
       let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
       let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
 
-      this.pathsPos.push({ x: gridX, y: gridY });
+      if (this.pathsPos.find((path) => path.x === gridX && path.y === gridY)) {
+        console.log({ gridX, gridY });
+        this.pathsPos = this.pathsPos.filter(
+          (path) => !(path.x === gridX && path.y === gridY)
+        );
+      } else {
+        this.pathsPos.push({ x: gridX, y: gridY });
+      }
+      console.log(this.pathsPos);
     } else {
       //check if resource tower is clicked
       for (let i = 0; i < this.availableTowers.length; i++) {
@@ -343,13 +363,40 @@ export default class WaveMode {
     }
   }
 
+  drawStartButton() {
+    this.context.beginPath();
+    this.context.fillStyle = "white";
+    console.log(this.startBtn);
+    this.context.fillRect(
+      this.startBtn.x,
+      this.startBtn.y,
+      this.startBtn.width,
+      this.startBtn.height
+    );
+    let textOffsetY = 30;
+    this.context.fillStyle = "black";
+    this.context.textAlign = "center";
+    this.context.fillText(
+      "START",
+      this.startBtn.x + this.startBtn.width / 2,
+      this.startBtn.y + textOffsetY,
+      this.startBtn.width
+    );
+    this.context.textAlign = "start";
+    this.context.closePath();
+  }
+
   draw() {
     this.drawResources();
+
     switch (this.waveModeState) {
       case WaveModeState.EDITOR:
+        this.drawStartButton();
+
         this.drawBackground();
         this.drawHoverPath();
         this.drawPath();
+
         break;
 
       case WaveModeState.PLAYING:
@@ -567,7 +614,6 @@ offsetY properties of the MouseEvent. */
       Math.floor(this.mouse.x / CellDimensions.WIDTH) * CellDimensions.WIDTH;
     this.hoverPath.y =
       Math.floor(this.mouse.y / CellDimensions.HEIGHT) * CellDimensions.HEIGHT;
-    console.log(this.hoverPath);
     this.context.drawImage(
       this.bgImg,
       220,
