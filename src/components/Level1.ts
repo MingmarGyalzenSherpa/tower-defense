@@ -1,4 +1,3 @@
-import { CellDimensions } from "./../constants/constants";
 import { CanvasDimension, CellDimensions } from "../constants/constants";
 import collision from "../utils/utils";
 import Cell from "./Cell";
@@ -442,9 +441,15 @@ export default class Level1 {
 
   updateEnemies() {
     for (let i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].update(this.pathsPos);
+      this.enemies[i].update();
       if (!this.enemies[i].getHp()) {
         this.coin += this.enemies[i].coinGain;
+        this.enemies.splice(i, 1);
+
+        i--;
+      }
+      if (this.enemies[i].x > CanvasDimension.WIDTH) {
+        this.health--;
         this.enemies.splice(i, 1);
 
         i--;
