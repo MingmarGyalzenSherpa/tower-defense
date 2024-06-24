@@ -1,9 +1,11 @@
+import { CellDimensions } from "./../constants/constants";
 import { CanvasDimension, CellDimensions } from "../constants/constants";
 import collision from "../utils/utils";
 import Cell from "./Cell";
 import Mouse from "./Mouse";
 import Tiles from "../assets/tileset/tileset.png";
 import Orc from "./Enemies/Orc";
+import HealthImg from "../assets/health.png";
 import MoonTowerImg from "../assets/tower/redmoon_showcase.png";
 import CannonL1TowerHead from "../assets/tower/Cannon.png";
 import MachineGunTowerHead from "../assets/tower/MG.png";
@@ -28,6 +30,8 @@ export default class Level1 {
   bgImg: CanvasImageSource;
   mouse: Mouse;
   frame: number;
+  health: number;
+  healthImg: CanvasImageSource;
   cannonL1Tower: IAvailableTower;
   machineGunTower: IAvailableTower;
   catapultTower: IAvailableTower;
@@ -65,6 +69,9 @@ export default class Level1 {
     this.frame = 0;
     this.bgImg = new Image();
     this.bgImg.src = Tiles;
+    this.health = 10;
+    this.healthImg = new Image();
+    this.healthImg.src = HealthImg;
     this.cannonL1Tower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
@@ -346,6 +353,28 @@ export default class Level1 {
     );
   }
 
+  drawHealth() {
+    let offsetX = 10;
+    this.context.beginPath();
+    this.context.drawImage(
+      this.healthImg,
+      20,
+      20,
+      700,
+      700,
+      offsetX,
+      CellDimensions.HEIGHT,
+      CellDimensions.WIDTH,
+      CellDimensions.HEIGHT
+    );
+    this.context.font = "30px Audiowide";
+    this.context.fillText(
+      `${this.health}`,
+      offsetX + CellDimensions.WIDTH,
+      CellDimensions.HEIGHT + 40
+    );
+  }
+
   drawCoin() {
     let offsetX = 10;
     let offsetY = 10;
@@ -383,6 +412,7 @@ export default class Level1 {
   draw() {
     this.drawResources();
     this.drawCoin();
+    this.drawHealth();
     this.drawAvailableTowers();
     this.drawBackground();
     this.drawPath();
