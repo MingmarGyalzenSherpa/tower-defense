@@ -20,3 +20,8 @@ export enum GameState {
   PAUSED = "Paused",
   OVER = "Over",
 }
+
+export enum WaveModeState {
+  EDITOR = "Editor",
+  PLAYING = "Playing",
+}

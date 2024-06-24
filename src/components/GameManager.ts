@@ -4,6 +4,7 @@ import Mouse from "./Mouse";
 import StartBtnImg from "../assets/start-btn.png";
 import collision from "../utils/utils";
 import LevelBg from "../assets/levelBackground.png";
+import WaveMode from "./WaveMode";
 export default class GameManager {
   levels: {
     x?: number;
@@ -46,7 +47,7 @@ export default class GameManager {
     this.context = context;
     this.mouse = new Mouse();
     this.context.fillStyle = "black";
-    this.gameState = GameState.PLAYING;
+    this.gameState = GameState.WAITING;
     this.startBtn = {
       x: CanvasDimension.WIDTH / 2.5,
       y: CanvasDimension.HEIGHT / 2.5,
@@ -228,6 +229,11 @@ export default class GameManager {
             break;
 
           case 1:
+            break;
+
+          case 2:
+            this.curLevel = new WaveMode(this.canvas, this.context);
+            this.gameState = GameState.PLAYING;
             break;
         }
       }

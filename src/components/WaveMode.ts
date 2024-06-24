@@ -1,4 +1,8 @@
-import { CanvasDimension, CellDimensions } from "../constants/constants";
+import {
+  CanvasDimension,
+  CellDimensions,
+  WaveModeState,
+} from "../constants/constants";
 import collision from "../utils/utils";
 import Cell from "./Cell";
 import Mouse from "./Mouse";
@@ -15,7 +19,7 @@ import CoinImg from "../assets/coin.png";
 import MoonTower from "./Towers/MoonTower";
 import Catapult from "./Towers/Catapult";
 import IAvailableTower from "../Interfaces/AvailableTowerInterface";
-export default class Level1 {
+export default class WaveMode {
   context: CanvasRenderingContext2D;
   grids: Cell[];
   coin: number;
@@ -31,6 +35,12 @@ export default class Level1 {
   moonTower: IAvailableTower;
   coinImg: CanvasImageSource;
   towers: any[];
+  hoverPath: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
   selectedPlacedTowerOptions: {
     upgrade: {
       x?: number;
@@ -50,7 +60,9 @@ export default class Level1 {
   enemies: any[];
   canvas: HTMLCanvasElement;
   availableTowers: IAvailableTower[];
+  waveModeState: WaveModeState;
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
+    this.waveModeState = WaveModeState.EDITOR;
     this.canvas = canvas;
     this.context = context;
     this.mouse = new Mouse();
@@ -65,6 +77,13 @@ export default class Level1 {
     this.health = 10;
     this.healthImg = new Image();
     this.healthImg.src = HealthImg;
+
+    this.hoverPath = {
+      x: 0,
+      y: 0,
+      width: CellDimensions.WIDTH,
+      height: CellDimensions.HEIGHT,
+    };
     this.cannonL1Tower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
@@ -108,92 +127,7 @@ export default class Level1 {
 
     this.towers = [];
     //positions for path
-    this.pathsPos = [
-      {
-        x: 0,
-        y: 5,
-      },
-      {
-        x: 1,
-        y: 5,
-      },
-      {
-        x: 2,
-        y: 5,
-      },
-      {
-        x: 3,
-        y: 5,
-      },
-      {
-        x: 3,
-        y: 4,
-      },
-      {
-        x: 3,
-        y: 3,
-      },
-      {
-        x: 4,
-        y: 3,
-      },
-      {
-        x: 5,
-        y: 3,
-      },
-      {
-        x: 6,
-        y: 3,
-      },
-      {
-        x: 7,
-        y: 3,
-      },
-      {
-        x: 7,
-        y: 4,
-      },
-      {
-        x: 7,
-        y: 5,
-      },
-      {
-        x: 7,
-        y: 6,
-      },
-      {
-        x: 8,
-        y: 6,
-      },
-      {
-        x: 9,
-        y: 6,
-      },
-      {
-        x: 10,
-        y: 6,
-      },
-      {
-        x: 11,
-        y: 6,
-      },
-      {
-        x: 11,
-        y: 5,
-      },
-      {
-        x: 12,
-        y: 5,
-      },
-      {
-        x: 13,
-        y: 5,
-      },
-      {
-        x: 14,
-        y: 5,
-      },
-    ];
+    this.pathsPos = [];
     this.enemies.push(new Orc(this.context, this.pathsPos));
 
     this.createGrid();
@@ -203,27 +137,34 @@ export default class Level1 {
   }
 
   handleClick = () => {
-    //check if resource tower is clicked
-    for (let i = 0; i < this.availableTowers.length; i++) {
-      if (
-        collision(this.mouse, {
-          x: this.availableTowers[i].x!,
-          y: this.availableTowers[i].y!,
-          width: this.availableTowers[i].width,
-          height: this.availableTowers[i].height,
-        })
-      ) {
-        this.selectedAvailableTower = i;
+    if (this.waveModeState === WaveModeState.EDITOR) {
+      let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
+      let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
+
+      this.pathsPos.push({ x: gridX, y: gridY });
+    } else {
+      //check if resource tower is clicked
+      for (let i = 0; i < this.availableTowers.length; i++) {
+        if (
+          collision(this.mouse, {
+            x: this.availableTowers[i].x!,
+            y: this.availableTowers[i].y!,
+            width: this.availableTowers[i].width,
+            height: this.availableTowers[i].height,
+          })
+        ) {
+          this.selectedAvailableTower = i;
+        }
       }
+
+      //place tower
+      this.placeTower();
+
+      //handle placed tower options clicked
+      this.handlePlaceTowersOptionClick();
+
+      this.handlePlacedTowerClick();
     }
-
-    //place tower
-    this.placeTower();
-
-    //handle placed tower options clicked
-    this.handlePlaceTowersOptionClick();
-
-    this.handlePlacedTowerClick();
   };
 
   handlePlacedTowerClick() {
@@ -404,24 +345,38 @@ export default class Level1 {
 
   draw() {
     this.drawResources();
-    this.drawCoin();
-    this.drawHealth();
-    this.drawAvailableTowers();
-    this.drawBackground();
-    this.drawPath();
-    this.drawGrid();
-    this.drawSelectedAvailableTower();
-    this.drawTowers();
-    this.drawSelectedPlacedTowerRange();
-    this.drawSelectedPlacedTowerOptions();
-    this.drawEnemy();
+    switch (this.waveModeState) {
+      case WaveModeState.EDITOR:
+        this.drawBackground();
+        this.drawHoverPath();
+        this.drawPath();
+        break;
+
+      case WaveModeState.PLAYING:
+        this.drawCoin();
+        this.drawHealth();
+        this.drawAvailableTowers();
+        this.drawBackground();
+        this.drawPath();
+        this.drawGrid();
+        this.drawSelectedAvailableTower();
+        this.drawTowers();
+        this.drawSelectedPlacedTowerRange();
+        this.drawSelectedPlacedTowerOptions();
+        this.drawEnemy();
+        break;
+    }
   }
 
   update() {
     this.frame++;
     // this.generateEnemy();
-    this.updateEnemies();
-    this.updateTowers();
+
+    if (this.waveModeState === WaveModeState.EDITOR) {
+    } else {
+      this.updateEnemies();
+      this.updateTowers();
+    }
   }
 
   updateTowers() {
@@ -442,7 +397,7 @@ export default class Level1 {
 
         i--;
       }
-      if (this.enemies[i]?.x > CanvasDimension.WIDTH) {
+      if (this.enemies[i].x > CanvasDimension.WIDTH) {
         this.health--;
         this.enemies.splice(i, 1);
 
@@ -605,6 +560,25 @@ offsetY properties of the MouseEvent. */
 
     this.towers.push(tower!);
     this.selectedAvailableTower = undefined;
+  }
+
+  drawHoverPath() {
+    this.hoverPath.x =
+      Math.floor(this.mouse.x / CellDimensions.WIDTH) * CellDimensions.WIDTH;
+    this.hoverPath.y =
+      Math.floor(this.mouse.y / CellDimensions.HEIGHT) * CellDimensions.HEIGHT;
+    console.log(this.hoverPath);
+    this.context.drawImage(
+      this.bgImg,
+      220,
+      50,
+      100,
+      100,
+      this.hoverPath.x,
+      this.hoverPath.y,
+      CellDimensions.WIDTH,
+      CellDimensions.HEIGHT
+    );
   }
 
   drawGrid() {

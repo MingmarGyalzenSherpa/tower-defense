@@ -1,3 +1,5 @@
+import Projectile from "../components/Projectile";
+
 export default interface ITower {
   x: number;
   y: number;
