@@ -23,6 +23,22 @@ export default class GameManager {
     height: number;
     img?: CanvasImageSource;
   };
+
+  resumeBtn?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  };
+
+  quitBtn?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  };
   gameState: GameState;
   mouse: Mouse;
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
@@ -49,13 +65,46 @@ export default class GameManager {
         color: "white",
       });
     }
+    this.resumeBtn = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      color: "white",
+    };
+    this.quitBtn = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      color: "white",
+    };
     this.levelBg = new Image();
     this.levelBg.src = LevelBg;
     this.curLevel = new Level1(this.canvas, this.context);
     requestAnimationFrame(this.start);
     canvas.addEventListener("mousemove", this.handleMouseMove);
     canvas.addEventListener("click", this.handleClick);
+
+    document.addEventListener("keydown", this.handleKeyPress);
   }
+
+  handleKeyPress = (e: KeyboardEvent) => {
+    //pause game
+    switch (e.code) {
+      case "Escape":
+        if (
+          this.gameState != GameState.PAUSED &&
+          this.gameState != GameState.PLAYING
+        )
+          break;
+        this.gameState =
+          this.gameState === GameState.PAUSED
+            ? GameState.PLAYING
+            : GameState.PAUSED;
+        break;
+    }
+  };
 
   handleMouseMove = (e: MouseEvent) => {
     if (this.gameState === GameState.PLAYING) return;
@@ -77,12 +126,89 @@ export default class GameManager {
         }
       }
     }
+
+    if (this.gameState === GameState.PAUSED) {
+      if (collision(this.mouse, this.resumeBtn!)) {
+        this.resumeBtn!.color = "green";
+      } else {
+        this.resumeBtn!.color = "white";
+      }
+
+      if (collision(this.mouse, this.quitBtn!)) {
+        this.quitBtn!.color = "red";
+      } else {
+        this.quitBtn!.color = "white";
+      }
+    }
   };
 
   handleClick = () => {
     this.clickStartBtn();
     this.handleMenuClick();
+    this.handlePausedClick();
   };
+
+  handlePausedClick() {
+    if (this.gameState != GameState.PAUSED) return;
+    if (collision(this.mouse, this.resumeBtn!)) {
+      this.gameState = GameState.PLAYING;
+    }
+
+    if (collision(this.mouse, this.quitBtn!)) {
+      this.gameState = GameState.MENU;
+    }
+  }
+
+  renderPausedState() {
+    this.context.beginPath();
+    this.context.fillStyle = "black";
+    this.context.globalAlpha = 0.1;
+    this.context.fillRect(0, 0, CanvasDimension.WIDTH, CanvasDimension.HEIGHT);
+    this.context.fillStyle = "white";
+    this.context.font = "20px Audiowide";
+    let btnOffsetX = 100;
+    let resumeBtnOffsetY = 100;
+    this.resumeBtn = {
+      ...this.resumeBtn!,
+      x: CanvasDimension.WIDTH / 2 - btnOffsetX,
+      y: CanvasDimension.HEIGHT / 2 - resumeBtnOffsetY,
+      width: 100,
+      height: 40,
+    };
+    this.quitBtn = {
+      ...this.quitBtn!,
+      x: CanvasDimension.WIDTH / 2 - btnOffsetX,
+      y: this.resumeBtn.y + this.resumeBtn.height,
+      width: 100,
+      height: 40,
+    };
+
+    this.context.textAlign = "center";
+    //draw resume button
+
+    let textOffsetY = 20;
+    this.context.fillStyle = this.resumeBtn.color;
+
+    this.context.fillText(
+      "RESUME",
+      this.resumeBtn.x + this.resumeBtn.width / 2,
+      this.resumeBtn.y + textOffsetY,
+      this.resumeBtn.width
+    );
+
+    this.context.fillStyle = this.quitBtn.color;
+
+    //draw quite button
+
+    this.context.fillText(
+      "QUIT",
+      this.quitBtn.x + this.quitBtn.width / 2,
+      this.quitBtn.y + textOffsetY,
+      this.quitBtn.width
+    );
+    this.context.textAlign = "start";
+    this.context.globalAlpha = 1;
+  }
 
   handleMenuClick() {
     if (this.gameState !== GameState.MENU) return;
@@ -124,7 +250,7 @@ export default class GameManager {
   };
 
   draw() {
-    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     switch (this.gameState) {
       case GameState.WAITING:
         //menu render
@@ -138,6 +264,7 @@ export default class GameManager {
         this.renderRunningState();
         break;
       case GameState.PAUSED:
+        this.renderPausedState();
         break;
       case GameState.OVER:
         break;
