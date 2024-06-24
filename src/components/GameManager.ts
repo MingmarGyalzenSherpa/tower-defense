@@ -30,7 +30,7 @@ export default class GameManager {
     this.context = context;
     this.mouse = new Mouse();
     this.context.fillStyle = "black";
-    this.gameState = GameState.WAITING;
+    this.gameState = GameState.PLAYING;
     this.startBtn = {
       x: CanvasDimension.WIDTH / 2.5,
       y: CanvasDimension.HEIGHT / 2.5,
@@ -64,15 +64,13 @@ export default class GameManager {
 
     if (this.gameState === GameState.MENU) {
       for (let i = 0; i < this.levels.length; i++) {
-        if (
-          collision(this.mouse, {
-            x: this.levels[i].x!,
-            y: this.levels[i].y!,
-            width: this.levels[i].width!,
-            height: this.levels[i].height!,
-          })
-        ) {
-          console.log("true");
+        const levelTextRect = {
+          x: this.levels[i].x!,
+          y: this.levels[i].y!,
+          width: this.levels[i].width!,
+          height: this.levels[i].height!,
+        };
+        if (collision(this.mouse, levelTextRect)) {
           this.levels[i].color = "green";
         } else {
           this.levels[i].color = "white";
@@ -88,7 +86,6 @@ export default class GameManager {
 
   handleMenuClick() {
     if (this.gameState !== GameState.MENU) return;
-    console.log("hey wassup");
     for (let i = 0; i < this.levels.length; i++) {
       if (
         collision(this.mouse, {
@@ -180,7 +177,6 @@ export default class GameManager {
       this.levels[i].width = width;
       this.levels[i].height = height;
 
-      console.log(this.levels[i]);
       this.context.font = "20px Audiowide";
       this.context.fillStyle = this.levels[i].color;
       this.context.fillText(

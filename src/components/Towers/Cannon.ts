@@ -101,6 +101,9 @@ export default class Cannon {
     this.context.closePath();
   }
 
+  /**
+   * It is used to upgrade a tower
+   */
   upgrade() {
     switch (this.curLevel) {
       case 1:

@@ -95,7 +95,6 @@ export default class Level1 {
     this.availableTowers.push(this.machineGunTower);
     this.availableTowers.push(this.moonTower);
     this.availableTowers.push(this.catapultTower);
-
     this.selectedPlacedTowerOptions = {
       upgrade: {
         width: CellDimensions.WIDTH,
@@ -195,6 +194,7 @@ export default class Level1 {
         y: 5,
       },
     ];
+    this.enemies.push(new Orc(this.context, this.pathsPos));
 
     this.createGrid();
     this.drawGrid();
@@ -368,11 +368,11 @@ export default class Level1 {
     this.context.closePath();
   }
 
-  generateEnemy() {
-    if (this.frame % 200 === 0 && this.frame % 600 != 0) {
-      this.enemies.push(new Orc(this.context, this.pathsPos));
-    }
-  }
+  // generateEnemy() {
+  //   if (this.frame % 200 === 0 && this.frame % 600 != 0) {
+  //     this.enemies.push(new Orc(this.context, this.pathsPos));
+  //   }
+  // }
 
   drawEnemy() {
     for (let i = 0; i < this.enemies.length; i++) {
@@ -396,7 +396,7 @@ export default class Level1 {
 
   update() {
     this.frame++;
-    this.generateEnemy();
+    // this.generateEnemy();
     this.updateEnemies();
     this.updateTowers();
   }
