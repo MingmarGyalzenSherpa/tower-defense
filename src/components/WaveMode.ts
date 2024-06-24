@@ -1,3 +1,4 @@
+import { GameState } from "./../constants/constants";
 import {
   CanvasDimension,
   CellDimensions,
@@ -140,7 +141,6 @@ export default class WaveMode {
     this.towers = [];
     //positions for path
     this.pathsPos = [];
-    this.enemies.push(new Orc(this.context, this.pathsPos));
 
     this.createGrid();
     this.drawGrid();
@@ -150,18 +150,24 @@ export default class WaveMode {
 
   handleClick = () => {
     if (this.waveModeState === WaveModeState.EDITOR) {
+      //check if start btn is clicked
+      if (collision(this.mouse, this.startBtn)) {
+        this.waveModeState = WaveModeState.PLAYING;
+        this.enemies.push(new Orc(this.context, this.pathsPos));
+      }
+
+      //add or remove path
       let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
       let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
 
+      if (gridY < 2) return;
       if (this.pathsPos.find((path) => path.x === gridX && path.y === gridY)) {
-        console.log({ gridX, gridY });
         this.pathsPos = this.pathsPos.filter(
           (path) => !(path.x === gridX && path.y === gridY)
         );
       } else {
         this.pathsPos.push({ x: gridX, y: gridY });
       }
-      console.log(this.pathsPos);
     } else {
       //check if resource tower is clicked
       for (let i = 0; i < this.availableTowers.length; i++) {
@@ -366,7 +372,6 @@ export default class WaveMode {
   drawStartButton() {
     this.context.beginPath();
     this.context.fillStyle = "white";
-    console.log(this.startBtn);
     this.context.fillRect(
       this.startBtn.x,
       this.startBtn.y,
@@ -392,7 +397,6 @@ export default class WaveMode {
     switch (this.waveModeState) {
       case WaveModeState.EDITOR:
         this.drawStartButton();
-
         this.drawBackground();
         this.drawHoverPath();
         this.drawPath();
@@ -421,6 +425,7 @@ export default class WaveMode {
 
     if (this.waveModeState === WaveModeState.EDITOR) {
     } else {
+      console.log(this.enemies);
       this.updateEnemies();
       this.updateTowers();
     }
@@ -610,10 +615,11 @@ offsetY properties of the MouseEvent. */
   }
 
   drawHoverPath() {
-    this.hoverPath.x =
-      Math.floor(this.mouse.x / CellDimensions.WIDTH) * CellDimensions.WIDTH;
-    this.hoverPath.y =
-      Math.floor(this.mouse.y / CellDimensions.HEIGHT) * CellDimensions.HEIGHT;
+    let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
+    let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
+    if (gridY < 2) return;
+    this.hoverPath.x = gridX * CellDimensions.WIDTH;
+    this.hoverPath.y = gridY * CellDimensions.HEIGHT;
     this.context.drawImage(
       this.bgImg,
       220,
