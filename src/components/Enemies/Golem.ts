@@ -19,6 +19,7 @@ export default class Golem {
   imgWidth: number;
   frame: number;
   maxSpriteFrame: number;
+  velocity: number;
   pathPos: { x: number; y: number }[];
   constructor(
     context: CanvasRenderingContext2D,
@@ -35,7 +36,8 @@ export default class Golem {
       this.targetPath = startingPath;
     }
     this.dy = 0;
-    this.dx = 0.5;
+    this.velocity = 0.5;
+    this.dx = this.velocity;
     this.coinGain = 100;
     this.srcX = 0;
     this.hp = 500;
@@ -195,27 +197,36 @@ export default class Golem {
     let targetX = this.targetPath!.x * CellDimensions.WIDTH;
     let targetY = this.targetPath!.y * CellDimensions.WIDTH;
     if (targetX > this.x) {
-      this.dx = 0.5;
+      this.dx = this.velocity;
       this.dy = 0;
     }
     if (targetX < this.x) {
-      this.dx = -0.5;
+      this.dx = -this.velocity;
       this.dy = 0;
     }
 
     if (targetY > this.y) {
       this.dx = 0;
-      this.dy = 0.5;
+      this.dy = this.velocity;
     }
     if (targetY < this.y) {
       this.dx = 0;
-      this.dy = -0.5;
+      this.dy = -this.velocity;
     }
     if (this.prevPath.length === this.pathPos.length) {
-      this.dx = 0.5;
+      this.dx = this.velocity;
       this.dy = 0;
     }
     this.x += this.dx;
     this.y += this.dy;
+  }
+
+  //reset velocity
+  resetVelocity() {
+    this.velocity = 0.5;
+  }
+
+  changeVelocity(newVelocity: number) {
+    this.velocity = newVelocity;
   }
 }

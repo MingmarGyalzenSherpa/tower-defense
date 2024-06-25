@@ -17,6 +17,7 @@ export default class Skeleton {
   srcX: number;
   imgWidth: number;
   frame: number;
+  velocity: number;
   pathPos: { x: number; y: number }[];
   constructor(
     context: CanvasRenderingContext2D,
@@ -34,7 +35,8 @@ export default class Skeleton {
       this.targetPath = startingPath;
     }
     this.dy = 0;
-    this.dx = 1;
+    this.velocity = 1;
+    this.dx = this.velocity;
     this.coinGain = 60;
     this.srcX = 0;
     this.hp = 300;
@@ -99,45 +101,6 @@ export default class Skeleton {
     if (this.hp < 0) this.hp = 0;
   }
 
-  // update() {
-
-  //   this.frame++;
-
-  //   let nextX, nextY;
-  //   if (this.x != this.targetPath?.x && this.y != this.targetPath?.y) {
-  //     nextX = this.x;
-  //     nextY = this.y;
-  //     //search left
-  //   }
-
-  //   let targetX = pathPos[this.nextPath].x * CellDimensions.WIDTH;
-  //   let targetY = pathPos[this.nextPath].y * CellDimensions.HEIGHT;
-
-  //   if (targetX > this.x) {
-  //     this.dx = 1;
-  //     this.dy = 0;
-  //   } else if (targetX < this.x) {
-  //     this.dx = 10.25;
-  //     this.dy = 0;
-  //   }
-
-  //   if (targetY > this.y) {
-  //     this.dy = 0.25;
-  //     this.dx = 1;
-  //   } else if (targetY < this.y) {
-  //     this.dy = -0.25;
-  //     this.dx = 1;
-  //   }
-  //   if (
-  //     this.x === targetX &&
-  //     this.y === targetY &&
-  //     this.nextPath < pathPos.length
-  //   ) {
-  //     this.nextPath++;
-  //   }
-  //   this.y += this.dy;
-  //   this.x += this.dx;
-  // }
   update() {
     this.frame++;
     if (this.y === undefined) return;
@@ -192,27 +155,36 @@ export default class Skeleton {
     let targetX = this.targetPath!.x * CellDimensions.WIDTH;
     let targetY = this.targetPath!.y * CellDimensions.WIDTH;
     if (targetX > this.x) {
-      this.dx = 1;
+      this.dx = this.velocity;
       this.dy = 0;
     }
     if (targetX < this.x) {
-      this.dx = -1;
+      this.dx = -this.velocity;
       this.dy = 0;
     }
 
     if (targetY > this.y) {
       this.dx = 0;
-      this.dy = 1;
+      this.dy = this.velocity;
     }
     if (targetY < this.y) {
       this.dx = 0;
-      this.dy = -1;
+      this.dy = -this.velocity;
     }
     if (this.prevPath.length === this.pathPos.length) {
-      this.dx = 1;
+      this.dx = this.velocity;
       this.dy = 0;
     }
     this.x += this.dx;
     this.y += this.dy;
+  }
+
+  //reset velocity
+  resetVelocity() {
+    this.velocity = 1;
+  }
+
+  changeVelocity(newVelocity: number) {
+    this.velocity = newVelocity;
   }
 }

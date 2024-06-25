@@ -106,45 +106,6 @@ export default class Bat {
     if (this.hp < 0) this.hp = 0;
   }
 
-  // update() {
-
-  //   this.frame++;
-
-  //   let nextX, nextY;
-  //   if (this.x != this.targetPath?.x && this.y != this.targetPath?.y) {
-  //     nextX = this.x;
-  //     nextY = this.y;
-  //     //search left
-  //   }
-
-  //   let targetX = pathPos[this.nextPath].x * CellDimensions.WIDTH;
-  //   let targetY = pathPos[this.nextPath].y * CellDimensions.HEIGHT;
-
-  //   if (targetX > this.x) {
-  //     this.dx = 2;
-  //     this.dy = 0;
-  //   } else if (targetX < this.x) {
-  //     this.dx = 20.25;
-  //     this.dy = 0;
-  //   }
-
-  //   if (targetY > this.y) {
-  //     this.dy = 0.25;
-  //     this.dx = 2;
-  //   } else if (targetY < this.y) {
-  //     this.dy = -0.25;
-  //     this.dx = 2;
-  //   }
-  //   if (
-  //     this.x === targetX &&
-  //     this.y === targetY &&
-  //     this.nextPath < pathPos.length
-  //   ) {
-  //     this.nextPath++;
-  //   }
-  //   this.y += this.dy;
-  //   this.x += this.dx;
-  // }
   update() {
     this.frame++;
     if (this.y === undefined) return;
@@ -192,7 +153,6 @@ export default class Bat {
         }
       }
       this.targetPath = newTargetPath!;
-      console.log(this.targetPath);
     }
 
     if (!this.targetPath) return;
@@ -226,7 +186,6 @@ export default class Bat {
   //reset velocity
   resetVelocity() {
     this.velocity = 2;
-    console.log("rest done");
   }
 
   changeVelocity(newVelocity: number) {
