@@ -13,6 +13,7 @@ export default class GameManager {
     height?: number;
     color: string;
   }[];
+  curLevelIndex?: number;
   levelBg: CanvasImageSource;
   context: CanvasRenderingContext2D;
   canvas: HTMLCanvasElement;
@@ -171,12 +172,27 @@ export default class GameManager {
         this.quitBtn!.color = "white";
       }
     }
+
+    if (this.gameState === GameState.OVER) {
+      if (collision(this.mouse, this.playAgainBtn)) {
+        this.playAgainBtn.color = "green";
+      } else {
+        this.playAgainBtn.color = "white";
+      }
+
+      if (collision(this.mouse, this.mainMenuBtn)) {
+        this.mainMenuBtn.color = "red";
+      } else {
+        this.mainMenuBtn.color = "white";
+      }
+    }
   };
 
   handleClick = () => {
     this.clickStartBtn();
     this.handleMenuClick();
     this.handlePausedClick();
+    this.handleGameOverClick();
   };
 
   handlePausedClick() {
@@ -190,30 +206,59 @@ export default class GameManager {
     }
   }
 
+  handleGameOverClick() {
+    if (this.gameState != GameState.OVER) return;
+    if (collision(this.mouse, this.playAgainBtn)) {
+      this.gameState = GameState.PLAYING;
+      switch (this.curLevel!) {
+        case 0:
+          this.curLevel = new Level1(this.canvas, this.context);
+          break;
+
+        case 1:
+          break;
+        case 2:
+          this.curLevel = new Level1(this.canvas, this.context);
+          break;
+      }
+    }
+
+    if (collision(this.mouse, this.mainMenuBtn)) {
+      this.gameState = GameState.MENU;
+    }
+  }
+
   renderGameOverState() {
     this.context.beginPath();
     this.context.fillStyle = "black";
     this.context.fillRect(0, 0, CanvasDimension.WIDTH, CanvasDimension.HEIGHT);
     this.context.fillStyle = "white";
-    this.context.font = "22px Audiowide";
+
     let btnOffsetX = 100;
     let playAgainBtnOffsetY = 100;
     this.playAgainBtn = {
       ...this.playAgainBtn!,
       x: CanvasDimension.WIDTH / 2 - btnOffsetX,
       y: CanvasDimension.HEIGHT / 2 - playAgainBtnOffsetY,
-      width: 100,
+      width: 120,
       height: 40,
     };
     this.mainMenuBtn = {
       ...this.mainMenuBtn,
       x: CanvasDimension.WIDTH / 2 - btnOffsetX,
-      y: this.mainMenuBtn.y + this.mainMenuBtn.height,
-      width: 100,
+      y: this.playAgainBtn.y + this.mainMenuBtn.height,
+      width: 120,
       height: 40,
     };
 
     this.context.textAlign = "center";
+
+    this.context.font = "50px Audiowide";
+    this.context.fillStyle = "red";
+    let gameOverY = this.playAgainBtn.y - 50;
+    let gameOverX = this.playAgainBtn.x + this.playAgainBtn.width / 2;
+    this.context.fillText("GAME OVER", gameOverX, gameOverY);
+    this.context.font = "22px Audiowide";
 
     let textOffsetY = 20;
     this.context.fillStyle = this.playAgainBtn.color;
@@ -226,7 +271,7 @@ export default class GameManager {
     );
 
     this.context.fillStyle = this.mainMenuBtn.color;
-
+    console.log(this.mainMenuBtn);
     this.context.fillText(
       "BACK TO MAIN",
       this.mainMenuBtn.x + this.mainMenuBtn.width / 2,
@@ -307,11 +352,14 @@ export default class GameManager {
       ) {
         switch (i) {
           case 0:
+            this.curLevel = i;
             this.curLevel = new Level1(this.canvas, this.context);
             this.gameState = GameState.PLAYING;
             break;
 
           case 1:
+            this.curLevel = i;
+
             break;
 
           case 2:
