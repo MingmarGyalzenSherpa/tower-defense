@@ -37,11 +37,11 @@ export default class FireWorm {
     }
     this.maxSpriteFrame = 9;
     this.dy = 0;
-    this.dx = 2;
-    this.coinGain = 20;
+    this.dx = 1;
+    this.coinGain = 50;
     this.srcX = 0;
-    this.hp = 400;
-    this.maxHp = 400;
+    this.hp = 250;
+    this.maxHp = this.hp;
     this.imgWidth = 70;
     this.imgHeight = 90;
     this.img = new Image();
@@ -151,7 +151,7 @@ export default class FireWorm {
     let gridY = Math.floor(this.y / CellDimensions.HEIGHT);
 
     if (this.x < 0) {
-      this.dx = 2;
+      this.dx = 1;
       this.x += this.dx;
       this.y += this.dy;
 
@@ -196,7 +196,7 @@ export default class FireWorm {
     let targetX = this.targetPath!.x * CellDimensions.WIDTH;
     let targetY = this.targetPath!.y * CellDimensions.WIDTH;
     if (targetX > this.x) {
-      this.dx = 2;
+      this.dx = 1;
       this.dy = 0;
     }
     if (targetX < this.x) {
@@ -213,7 +213,7 @@ export default class FireWorm {
       this.dy = -1;
     }
     if (this.prevPath.length === this.pathPos.length) {
-      this.dx = 2;
+      this.dx = 1;
       this.dy = 0;
     }
     this.x += this.dx;

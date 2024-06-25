@@ -9,7 +9,7 @@ import Explosion from "../Explosion";
 export default class Cannon {
   x: number;
   y: number;
-  cost: number;
+  cost: number[];
   upgradeCost: number;
   curLevel: number;
   maxLevel: number;
@@ -37,7 +37,7 @@ export default class Cannon {
     this.curLevel = 1;
     this.maxLevel = 2;
     this.range = 200;
-    this.cost = 100;
+    this.cost = [80, 150, 200];
     this.isLocked = false;
     this.explosions = [];
     this.width = CellDimensions.WIDTH;

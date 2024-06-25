@@ -34,11 +34,11 @@ export default class Skeleton {
       this.targetPath = startingPath;
     }
     this.dy = 0;
-    this.dx = 2;
-    this.coinGain = 20;
+    this.dx = 1;
+    this.coinGain = 60;
     this.srcX = 0;
-    this.hp = 400;
-    this.maxHp = 400;
+    this.hp = 300;
+    this.maxHp = this.hp;
     this.imgWidth = 45;
     this.img = new Image();
     this.img.src = SkeletonSprite;
@@ -114,19 +114,19 @@ export default class Skeleton {
   //   let targetY = pathPos[this.nextPath].y * CellDimensions.HEIGHT;
 
   //   if (targetX > this.x) {
-  //     this.dx = 2;
+  //     this.dx = 1;
   //     this.dy = 0;
   //   } else if (targetX < this.x) {
-  //     this.dx = -0.25;
+  //     this.dx = 10.25;
   //     this.dy = 0;
   //   }
 
   //   if (targetY > this.y) {
   //     this.dy = 0.25;
-  //     this.dx = 0;
+  //     this.dx = 1;
   //   } else if (targetY < this.y) {
   //     this.dy = -0.25;
-  //     this.dx = 0;
+  //     this.dx = 1;
   //   }
   //   if (
   //     this.x === targetX &&
@@ -147,7 +147,7 @@ export default class Skeleton {
     let gridY = Math.floor(this.y / CellDimensions.HEIGHT);
 
     if (this.x < 0) {
-      this.dx = 2;
+      this.dx = 1;
       this.x += this.dx;
       this.y += this.dy;
 
@@ -192,7 +192,7 @@ export default class Skeleton {
     let targetX = this.targetPath!.x * CellDimensions.WIDTH;
     let targetY = this.targetPath!.y * CellDimensions.WIDTH;
     if (targetX > this.x) {
-      this.dx = 2;
+      this.dx = 1;
       this.dy = 0;
     }
     if (targetX < this.x) {
@@ -209,7 +209,7 @@ export default class Skeleton {
       this.dy = -1;
     }
     if (this.prevPath.length === this.pathPos.length) {
-      this.dx = 2;
+      this.dx = 1;
       this.dy = 0;
     }
     this.x += this.dx;

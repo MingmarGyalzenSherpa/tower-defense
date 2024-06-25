@@ -7,7 +7,7 @@ import collision from "../../utils/utils";
 export default class MoonTower {
   x: number;
   y: number;
-  cost: number;
+  cost: number[];
   srcX: number;
   upgradeCost: number;
   width: number;
@@ -24,14 +24,18 @@ export default class MoonTower {
   projectiles: Projectile[];
   projectileSpeed: number;
   damage: number;
+  curLevel: number;
+  maxLevel: number;
   projectileImg: CanvasImageSource;
   constructor(x: number, y: number, context: CanvasRenderingContext2D) {
     this.x = x;
     this.y = y;
     this.srcX = 0;
+    this.curLevel = 1;
+    this.maxLevel = 1;
     this.context = context;
     this.range = 200;
-    this.cost = 100;
+    this.cost = [100];
     this.isLocked = false;
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;

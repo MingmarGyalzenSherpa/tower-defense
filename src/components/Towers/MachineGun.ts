@@ -8,7 +8,7 @@ import collision from "../../utils/utils";
 export default class MachineGun {
   x: number;
   y: number;
-  cost: number;
+  cost: number[];
   upgradeCost: number;
   curLevel: number;
   maxLevel: number;
@@ -33,9 +33,9 @@ export default class MachineGun {
     this.y = y;
     this.context = context;
     this.curLevel = 1;
-    this.maxLevel = 2;
+    this.maxLevel = 3;
     this.range = 200;
-    this.cost = 100;
+    this.cost = [60, 140, 180];
     this.isLocked = false;
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;

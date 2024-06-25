@@ -68,7 +68,7 @@ export default class Level1 {
     this.coinImg.src = CoinImg;
     this.enemies = [];
     this.grids = [];
-    this.coin = 200;
+    this.coin = 500;
     this.frame = 0;
     this.bgImg = new Image();
     this.bgImg.src = Tiles;
@@ -518,9 +518,16 @@ export default class Level1 {
   update() {
     this.frame++;
     // this.generateEnemy();
+    // this.increaseCoin();
     this.updateWave();
     this.updateEnemies();
     this.updateTowers();
+  }
+
+  increaseCoin() {
+    if (this.frame % 200 === 0) {
+      this.coin += 20;
+    }
   }
 
   updateTowers() {
@@ -758,7 +765,8 @@ offsetY properties of the MouseEvent. */
         );
         break;
     }
-
+    if (tower!.cost[tower!.curLevel] > this.coin) return;
+    this.coin -= tower!.cost[tower!.curLevel];
     this.towers.push(tower!);
     this.selectedAvailableTower = undefined;
   }

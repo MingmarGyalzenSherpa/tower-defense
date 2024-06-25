@@ -6,7 +6,7 @@ import collision from "../../utils/utils";
 export default class Catapult {
   x: number;
   y: number;
-  cost: number;
+  cost: number[];
   upgradeCost: number;
   curLevel: number;
   maxLevel: number;
@@ -32,9 +32,9 @@ export default class Catapult {
     this.y = y;
     this.context = context;
     this.curLevel = 1;
-    this.maxLevel = 1;
+    this.maxLevel = 2;
     this.range = 300;
-    this.cost = 100;
+    this.cost = [40, 90];
     this.isLocked = false;
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;

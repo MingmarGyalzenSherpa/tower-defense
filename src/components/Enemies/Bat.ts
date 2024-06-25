@@ -38,10 +38,10 @@ export default class Bat {
     this.maxSpriteFrame = 5;
     this.dy = 0;
     this.dx = 2;
-    this.coinGain = 20;
+    this.coinGain = 30;
     this.srcX = 0;
-    this.hp = 400;
-    this.maxHp = 400;
+    this.hp = 200;
+    this.maxHp = 200;
     this.imgWidth = 16;
     this.imgHeight = 20;
     this.img = new Image();

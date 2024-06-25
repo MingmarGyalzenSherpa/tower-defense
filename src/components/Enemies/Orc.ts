@@ -33,11 +33,11 @@ export default class Orc {
       this.targetPath = startingPath;
     }
     this.dy = 0;
-    this.dx = 2;
-    this.coinGain = 20;
+    this.dx = 0.5;
+    this.coinGain = 100;
     this.srcX = 0;
-    this.hp = 400;
-    this.maxHp = 400;
+    this.hp = 500;
+    this.maxHp = this.hp;
     this.imgWidth = 105;
     this.img = new Image();
     this.img.src = OrcSprite;
@@ -147,7 +147,7 @@ export default class Orc {
     let gridY = Math.floor(this.y / CellDimensions.HEIGHT);
 
     if (this.x < 0) {
-      this.dx = 2;
+      this.dx = 0.5;
       this.x += this.dx;
       this.y += this.dy;
 
@@ -192,24 +192,24 @@ export default class Orc {
     let targetX = this.targetPath!.x * CellDimensions.WIDTH;
     let targetY = this.targetPath!.y * CellDimensions.WIDTH;
     if (targetX > this.x) {
-      this.dx = 2;
+      this.dx = 0.5;
       this.dy = 0;
     }
     if (targetX < this.x) {
-      this.dx = -1;
+      this.dx = -0.5;
       this.dy = 0;
     }
 
     if (targetY > this.y) {
       this.dx = 0;
-      this.dy = 1;
+      this.dy = 0.5;
     }
     if (targetY < this.y) {
       this.dx = 0;
-      this.dy = -1;
+      this.dy = -0.5;
     }
     if (this.prevPath.length === this.pathPos.length) {
-      this.dx = 2;
+      this.dx = 0.5;
       this.dy = 0;
     }
     this.x += this.dx;
