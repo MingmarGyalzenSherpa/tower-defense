@@ -250,6 +250,7 @@ export default class WaveMode {
       //check if start btn is clicked
       if (collision(this.mouse, this.startBtn)) {
         this.waveModeState = WaveModeState.PLAYING;
+        console.log(this.pathsPos);
       }
 
       //add or remove path
