@@ -266,7 +266,7 @@ export default class Level1 {
     this.waveInterval = 5000;
     this.createGrid();
     this.drawGrid();
-    this.canvas.addEventListener("mousemove", this.handleMouse);
+    this.canvas.addEventListener("mousemove", this.handleMouseMove);
     this.canvas.addEventListener("click", this.handleClick);
   }
 
@@ -312,6 +312,11 @@ export default class Level1 {
     }
 
     console.log(this.selectedDroppedTowerIndex);
+  }
+
+  clean() {
+    this.canvas.removeEventListener("mousemove", this.handleMouseMove);
+    this.canvas.removeEventListener("click", this.handleClick);
   }
 
   handlePlaceTowersOptionClick() {
@@ -452,6 +457,7 @@ export default class Level1 {
       CellDimensions.HEIGHT
     );
     this.context.font = "30px Audiowide";
+    this.context.fillStyle = "white";
     this.context.fillText(
       `${this.health}`,
       offsetX + CellDimensions.WIDTH,
@@ -472,7 +478,7 @@ export default class Level1 {
       CellDimensions.HEIGHT
     );
     this.context.font = "20px Audiowide";
-    this.context.fillStyle = "black";
+    this.context.fillStyle = "white";
     this.context.fillText(
       `Coins: ${this.coin}`,
       offsetX + CellDimensions.WIDTH,
@@ -602,7 +608,7 @@ export default class Level1 {
 
   drawResources() {
     this.context.beginPath();
-    this.context.fillStyle = "lightgreen";
+    this.context.fillStyle = "#E0A75E";
     this.context.fillRect(0, 0, this.canvas.width, CellDimensions.HEIGHT * 2);
     this.context.closePath();
   }
@@ -677,10 +683,10 @@ export default class Level1 {
     this.context.closePath();
   }
 
-  /* The method called `handleMouse` that takes a MouseEvent as a parameter.
+  /* The method called `handleMouseMove` that takes a MouseEvent as a parameter.
 Inside the method, it updates the x and y coordinates of a `mouse` object based on the offsetX and
 offsetY properties of the MouseEvent. */
-  handleMouse = (e: MouseEvent) => {
+  handleMouseMove = (e: MouseEvent) => {
     this.mouse.x = e.offsetX;
     this.mouse.y = e.offsetY;
   };

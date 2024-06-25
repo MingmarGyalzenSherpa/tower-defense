@@ -18,6 +18,7 @@ import CoinImg from "../assets/coin.png";
 import MoonTower from "./Towers/MoonTower";
 import Catapult from "./Towers/Catapult";
 import IAvailableTower from "../Interfaces/AvailableTowerInterface";
+import Orc from "./Enemies/Orc";
 export default class WaveMode {
   context: CanvasRenderingContext2D;
   grids: Cell[];
@@ -142,8 +143,13 @@ export default class WaveMode {
 
     this.createGrid();
     this.drawGrid();
-    this.canvas.addEventListener("mousemove", this.handleMouse);
+    this.canvas.addEventListener("mousemove", this.handleMouseMove);
     this.canvas.addEventListener("click", this.handleClick);
+  }
+
+  clean() {
+    this.canvas.removeEventListener("mousemove", this.handleMouseMove);
+    this.canvas.removeEventListener("click", this.handleClick);
   }
 
   handleClick = () => {
@@ -151,6 +157,7 @@ export default class WaveMode {
       //check if start btn is clicked
       if (collision(this.mouse, this.startBtn)) {
         this.waveModeState = WaveModeState.PLAYING;
+        this.enemies.push(new Orc(this.context, -100, this.pathsPos));
       }
 
       //add or remove path
@@ -356,7 +363,6 @@ export default class WaveMode {
 
   // generateEnemy() {
   //   if (this.frame % 200 === 0 && this.frame % 600 != 0) {
-  //     this.enemies.push(new Orc(this.context, this.pathsPos));
   //   }
   // }
 
@@ -532,10 +538,10 @@ export default class WaveMode {
     this.context.closePath();
   }
 
-  /* The method called `handleMouse` that takes a MouseEvent as a parameter.
+  /* The method called `handleMouseMove` that takes a MouseEvent as a parameter.
 Inside the method, it updates the x and y coordinates of a `mouse` object based on the offsetX and
 offsetY properties of the MouseEvent. */
-  handleMouse = (e: MouseEvent) => {
+  handleMouseMove = (e: MouseEvent) => {
     this.mouse.x = e.offsetX;
     this.mouse.y = e.offsetY;
   };

@@ -210,6 +210,7 @@ export default class GameManager {
     if (this.gameState != GameState.OVER) return;
     if (collision(this.mouse, this.playAgainBtn)) {
       this.gameState = GameState.PLAYING;
+      this.curLevel.clean();
       switch (this.curLevel!) {
         case 0:
           this.curLevel = new Level1(this.canvas, this.context);
