@@ -20,12 +20,12 @@ export default class Skeleton {
   pathPos: { x: number; y: number }[];
   constructor(
     context: CanvasRenderingContext2D,
-
+    x: number,
     pathPos: { x: number; y: number }[]
   ) {
     this.context = context;
     //set x to -100
-    this.x = -100;
+    this.x = x;
 
     //set y to path whose x is 0
     let startingPath = pathPos.find((path) => path.x === 0);

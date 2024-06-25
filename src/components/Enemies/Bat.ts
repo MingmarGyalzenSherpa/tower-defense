@@ -1,6 +1,6 @@
 import { CellDimensions } from "../../constants/constants";
-import FireWormSprite from "../../assets/enemy/fireworm.png";
-export default class FireWorm {
+import BatSprite from "../../assets/enemy/Bat_Sprite_Sheet.png";
+export default class Bat {
   x: number;
   y?: number;
   width: number;
@@ -35,17 +35,17 @@ export default class FireWorm {
       this.y = startingPath.y * CellDimensions.HEIGHT;
       this.targetPath = startingPath;
     }
-    this.maxSpriteFrame = 9;
+    this.maxSpriteFrame = 5;
     this.dy = 0;
     this.dx = 2;
     this.coinGain = 20;
     this.srcX = 0;
     this.hp = 400;
     this.maxHp = 400;
-    this.imgWidth = 70;
-    this.imgHeight = 90;
+    this.imgWidth = 16;
+    this.imgHeight = 20;
     this.img = new Image();
-    this.img.src = FireWormSprite;
+    this.img.src = BatSprite;
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;
     this.frame = 0;
@@ -66,7 +66,7 @@ export default class FireWorm {
     this.context.fillStyle = "red";
     this.context.drawImage(
       this.img,
-      this.srcX * (this.imgWidth + 20),
+      this.srcX * this.imgWidth,
       0,
       this.imgWidth,
       this.imgHeight,

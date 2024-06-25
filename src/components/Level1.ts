@@ -17,6 +17,7 @@ import Catapult from "./Towers/Catapult";
 import IAvailableTower from "../Interfaces/AvailableTowerInterface";
 import Skeleton from "./Enemies/Skeleton";
 import FireWorm from "./Enemies/FireWorm";
+import Bat from "./Enemies/Bat";
 export default class Level1 {
   context: CanvasRenderingContext2D;
   grids: Cell[];
@@ -52,6 +53,14 @@ export default class Level1 {
   enemies: any[];
   canvas: HTMLCanvasElement;
   availableTowers: IAvailableTower[];
+  currentWave: number;
+  waveTimer: number;
+  waveConfig: { enemies: { type: string; count: number }[] }[];
+  waveInProgress: boolean;
+  waveEnemySpawned: boolean;
+  waveInterval: number;
+  initialEnemyX?: number;
+
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
     this.canvas = canvas;
     this.context = context;
@@ -198,8 +207,64 @@ export default class Level1 {
     ];
     // this.enemies.push(new Orc(this.context, this.pathsPos));
     // this.enemies.push(new Skeleton(this.context, this.pathsPos));
-    this.enemies.push(new FireWorm(this.context, this.pathsPos));
-
+    // this.enemies.push(new FireWorm(this.context, this.pathsPos));
+    // this.enemies.push(new Bat(this.context, this.pathsPos));
+    //wave
+    this.waveConfig = [
+      {
+        enemies: [
+          {
+            type: "Bat",
+            count: 5,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Bat",
+            count: 4,
+          },
+          {
+            type: "Skeleton",
+            count: 3,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Skeleton",
+            count: 4,
+          },
+          {
+            type: "Orc",
+            count: 4,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Skeleton",
+            count: 3,
+          },
+          {
+            type: "Orc",
+            count: 3,
+          },
+          {
+            type: "FireWorm",
+            count: 5,
+          },
+        ],
+      },
+    ];
+    this.currentWave = 0;
+    this.waveInProgress = false;
+    this.waveTimer = 0;
+    this.waveEnemySpawned = false;
+    this.waveInterval = 5000;
     this.createGrid();
     this.drawGrid();
     this.canvas.addEventListener("mousemove", this.handleMouse);
@@ -424,6 +489,7 @@ export default class Level1 {
   update() {
     this.frame++;
     // this.generateEnemy();
+    this.updateWave();
     this.updateEnemies();
     this.updateTowers();
   }
@@ -453,6 +519,64 @@ export default class Level1 {
         i--;
       }
     }
+  }
+
+  updateWave() {
+    //check if  wave is ongoing
+    if (!this.waveInProgress && this.currentWave < this.waveConfig.length) {
+      this.waveInProgress = true;
+      this.waveTimer = 0;
+    }
+
+    //if wave is in progress
+    if (this.waveInProgress) {
+      this.waveTimer++;
+      this.spawnEnemy();
+      if (this.enemies.length === 0 || this.waveTimer >= this.waveInterval) {
+        this.waveTimer = 0;
+        this.waveEnemySpawned = false;
+        this.currentWave++;
+      }
+    }
+  }
+
+  spawnEnemy() {
+    this.initialEnemyX = -100;
+    let gapBetweenEnemyX = 150;
+    if (this.waveEnemySpawned) return;
+    const currentWaveDetail = this.waveConfig[this.currentWave];
+    for (const enemyDetail of currentWaveDetail.enemies) {
+      let enemy;
+      for (let i = 0; i < enemyDetail.count; i++) {
+        this.initialEnemyX = this.initialEnemyX - gapBetweenEnemyX;
+        switch (enemyDetail.type) {
+          case "Bat":
+            enemy = new Bat(this.context, this.initialEnemyX, this.pathsPos);
+            break;
+
+          case "Skeleton":
+            enemy = new Skeleton(
+              this.context,
+              this.initialEnemyX,
+              this.pathsPos
+            );
+            break;
+
+          case "Orc":
+            enemy = new Orc(this.context, this.initialEnemyX, this.pathsPos);
+            break;
+          case "FireWorm":
+            enemy = new FireWorm(
+              this.context,
+              this.initialEnemyX,
+              this.pathsPos
+            );
+            break;
+        }
+        this.enemies.push(enemy);
+      }
+    }
+    this.waveEnemySpawned = true;
   }
 
   drawResources() {
