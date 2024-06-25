@@ -60,7 +60,6 @@ export default class Level1 {
   waveEnemySpawned: boolean;
   waveInterval: number;
   initialEnemyX?: number;
-
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
     this.canvas = canvas;
     this.context = context;

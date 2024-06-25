@@ -25,7 +25,23 @@ export default class GameManager {
     img?: CanvasImageSource;
   };
 
-  resumeBtn?: {
+  resumeBtn: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  };
+
+  playAgainBtn: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    color: string;
+  };
+
+  mainMenuBtn: {
     x: number;
     y: number;
     width: number;
@@ -47,7 +63,7 @@ export default class GameManager {
     this.context = context;
     this.mouse = new Mouse();
     this.context.fillStyle = "black";
-    this.gameState = GameState.WAITING;
+    this.gameState = GameState.OVER;
     this.startBtn = {
       x: CanvasDimension.WIDTH / 2.5,
       y: CanvasDimension.HEIGHT / 2.5,
@@ -73,7 +89,21 @@ export default class GameManager {
       height: 0,
       color: "white",
     };
+    this.playAgainBtn = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      color: "white",
+    };
     this.quitBtn = {
+      x: 0,
+      y: 0,
+      width: 0,
+      height: 0,
+      color: "white",
+    };
+    this.mainMenuBtn = {
       x: 0,
       y: 0,
       width: 0,
@@ -160,6 +190,52 @@ export default class GameManager {
     }
   }
 
+  renderGameOverState() {
+    this.context.beginPath();
+    this.context.fillStyle = "black";
+    this.context.fillRect(0, 0, CanvasDimension.WIDTH, CanvasDimension.HEIGHT);
+    this.context.fillStyle = "white";
+    this.context.font = "22px Audiowide";
+    let btnOffsetX = 100;
+    let playAgainBtnOffsetY = 100;
+    this.playAgainBtn = {
+      ...this.playAgainBtn!,
+      x: CanvasDimension.WIDTH / 2 - btnOffsetX,
+      y: CanvasDimension.HEIGHT / 2 - playAgainBtnOffsetY,
+      width: 100,
+      height: 40,
+    };
+    this.mainMenuBtn = {
+      ...this.mainMenuBtn,
+      x: CanvasDimension.WIDTH / 2 - btnOffsetX,
+      y: this.mainMenuBtn.y + this.mainMenuBtn.height,
+      width: 100,
+      height: 40,
+    };
+
+    this.context.textAlign = "center";
+
+    let textOffsetY = 20;
+    this.context.fillStyle = this.playAgainBtn.color;
+
+    this.context.fillText(
+      "PLAY AGAIN",
+      this.playAgainBtn.x + this.playAgainBtn.width / 2,
+      this.playAgainBtn.y + textOffsetY,
+      this.playAgainBtn.width
+    );
+
+    this.context.fillStyle = this.mainMenuBtn.color;
+
+    this.context.fillText(
+      "BACK TO MAIN",
+      this.mainMenuBtn.x + this.mainMenuBtn.width / 2,
+      this.mainMenuBtn.y + textOffsetY,
+      this.mainMenuBtn.width
+    );
+    this.context.textAlign = "start";
+  }
+
   renderPausedState() {
     this.context.beginPath();
     this.context.fillStyle = "black";
@@ -211,6 +287,13 @@ export default class GameManager {
     this.context.globalAlpha = 1;
   }
 
+  //check if the game is over
+  checkGameOver() {
+    if (this.curLevel.health <= 0) {
+      this.gameState = GameState.OVER;
+    }
+  }
+
   handleMenuClick() {
     if (this.gameState !== GameState.MENU) return;
     for (let i = 0; i < this.levels.length; i++) {
@@ -252,6 +335,7 @@ export default class GameManager {
   start = () => {
     this.draw();
     this.update();
+    this.checkGameOver();
     requestAnimationFrame(this.start);
   };
 
@@ -273,6 +357,7 @@ export default class GameManager {
         this.renderPausedState();
         break;
       case GameState.OVER:
+        this.renderGameOverState();
         break;
     }
   }
