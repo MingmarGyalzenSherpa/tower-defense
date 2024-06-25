@@ -1,4 +1,3 @@
-import { GameState } from "./../constants/constants";
 import {
   CanvasDimension,
   CellDimensions,
@@ -8,7 +7,6 @@ import collision from "../utils/utils";
 import Cell from "./Cell";
 import Mouse from "./Mouse";
 import Tiles from "../assets/tileset/tileset.png";
-import Orc from "./Enemies/Orc";
 import HealthImg from "../assets/health.png";
 import MoonTowerImg from "../assets/tower/redmoon_showcase.png";
 import CannonL1TowerHead from "../assets/tower/Cannon.png";
@@ -153,7 +151,6 @@ export default class WaveMode {
       //check if start btn is clicked
       if (collision(this.mouse, this.startBtn)) {
         this.waveModeState = WaveModeState.PLAYING;
-        this.enemies.push(new Orc(this.context, this.pathsPos));
       }
 
       //add or remove path
