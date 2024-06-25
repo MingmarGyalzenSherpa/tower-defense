@@ -19,6 +19,7 @@ import MoonTower from "./Towers/MoonTower";
 import Catapult from "./Towers/Catapult";
 import IAvailableTower from "../Interfaces/AvailableTowerInterface";
 import Orc from "./Enemies/Orc";
+import Golem from "./Enemies/Golem";
 export default class WaveMode {
   context: CanvasRenderingContext2D;
   grids: Cell[];
@@ -157,7 +158,7 @@ export default class WaveMode {
       //check if start btn is clicked
       if (collision(this.mouse, this.startBtn)) {
         this.waveModeState = WaveModeState.PLAYING;
-        this.enemies.push(new Orc(this.context, -100, this.pathsPos));
+        this.enemies.push(new Golem(this.context, -100, this.pathsPos));
       }
 
       //add or remove path
