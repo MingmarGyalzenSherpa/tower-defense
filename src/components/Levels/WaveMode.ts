@@ -9,6 +9,7 @@ import Mouse from "../Mouse";
 import Tiles from "../../assets/tileset/tileset.png";
 import HealthImg from "../../assets/health.png";
 import MoonTowerImg from "../../assets/tower/redmoon_showcase.png";
+import SlowPowerupSprite from "../../assets/PowerUp/slowPowerup.png";
 import CannonL1TowerHead from "../../assets/tower/Cannon.png";
 import MachineGunTowerHead from "../../assets/tower/MG.png";
 import CatapultTowerImg from "../../assets/tower/tower-pulley_showcase.png";
@@ -23,6 +24,8 @@ import Golem from "../Enemies/Golem";
 import FireWorm from "../Enemies/FireWorm";
 import Skeleton from "../Enemies/Skeleton";
 import Bat from "../Enemies/Bat";
+import IAvailablePowerUp from "../../Interfaces/AvailablePowerupInterface";
+import SlowEnemy from "../PowerUps/SlowEnemy";
 export default class WaveMode {
   context: CanvasRenderingContext2D;
   grids: Cell[];
@@ -36,6 +39,10 @@ export default class WaveMode {
   cannonL1Tower: IAvailableTower;
   machineGunTower: IAvailableTower;
   catapultTower: IAvailableTower;
+  availablePowerups: IAvailablePowerUp[];
+  slowEnemyPowerUp: IAvailablePowerUp;
+  powerups: any[];
+
   moonTower: IAvailableTower;
   coinImg: CanvasImageSource;
   towers: any[];
@@ -66,6 +73,7 @@ export default class WaveMode {
     height: number;
   };
   selectedAvailableTower?: number;
+  selectedAvailablePowerUp?: number;
   selectedDroppedTowerIndex?: number;
   enemies: any[];
   canvas: HTMLCanvasElement;
@@ -134,6 +142,18 @@ export default class WaveMode {
       height: CellDimensions.HEIGHT,
       cost: 40,
     };
+
+    //power ups
+    this.powerups = [];
+    this.slowEnemyPowerUp = {
+      img: new Image(),
+      width: CellDimensions.WIDTH,
+      height: CellDimensions.HEIGHT,
+      cost: 200,
+    };
+    this.slowEnemyPowerUp.img.src = SlowPowerupSprite;
+    this.availablePowerups = [];
+    this.availablePowerups.push(this.slowEnemyPowerUp);
 
     this.catapultTower.img.src = CatapultTowerImg;
     this.cannonL1Tower.img.src = CannonL1TowerHead;
@@ -259,8 +279,26 @@ export default class WaveMode {
         }
       }
 
+      //check if powerup is clicked
+      for (let i = 0; i < this.availablePowerups.length; i++) {
+        if (
+          collision(this.mouse, {
+            x: this.availablePowerups[i].x!,
+            y: this.availablePowerups[i].y!,
+            width: this.availablePowerups[i].width,
+            height: this.availablePowerups[i].height,
+          })
+        ) {
+          this.selectedAvailablePowerUp = i;
+          this.selectedAvailableTower = undefined;
+        }
+      }
+
       //place tower
       this.placeTower();
+
+      //place powerup
+      this.placePowerUp();
 
       //handle placed tower options clicked
       this.handlePlaceTowersOptionClick();
@@ -445,6 +483,68 @@ export default class WaveMode {
     }
   }
 
+  drawAvailablePowerUps() {
+    let i = 0;
+    for (let x = 10; x <= 12 && i < this.availablePowerups.length; x++) {
+      this.context.beginPath();
+
+      //set property
+      this.availablePowerups[i].x = x * CellDimensions.WIDTH;
+      this.availablePowerups[i].y = CellDimensions.HEIGHT;
+      //check collision for  stroke
+      if (
+        collision(this.mouse, {
+          x: this.availablePowerups[i].x!,
+          y: this.availablePowerups[i].y!,
+          width: this.availablePowerups[i].width,
+          height: this.availablePowerups[i].height,
+        })
+      ) {
+        this.context.beginPath();
+        this.context.strokeRect(
+          this.availablePowerups[i].x!,
+          this.availablePowerups[i].y!,
+          this.availablePowerups[i].width,
+          this.availablePowerups[i].height
+        );
+      }
+
+      //draw cost
+      let textOffsetX = 30;
+      let textOffsetY = -20;
+      this.context.font = "16px Audiowide";
+      this.context.fillText(
+        `${this.availablePowerups[i].cost}`,
+        this.availablePowerups[i].x! + textOffsetX,
+        this.availablePowerups[i].y! + textOffsetY
+      );
+      //draw image
+      let srcX = 0;
+      let srcY = 0;
+      let srcWidth = 16;
+      let srcHeight = 16;
+
+      this.context.drawImage(
+        this.availablePowerups[i].img as CanvasImageSource,
+        srcX,
+        srcY,
+        srcWidth,
+        srcHeight,
+        this.availablePowerups[i].x!,
+        this.availablePowerups[i].y!,
+        CellDimensions.WIDTH,
+        CellDimensions.HEIGHT
+      );
+      i++;
+    }
+  }
+
+  drawPowerUps() {
+    for (let i = 0; i < this.powerups.length; i++) {
+      this.powerups[i].draw();
+    }
+  }
+
   drawStartButton() {
     this.context.beginPath();
     this.context.fillStyle = "white";
@@ -497,11 +597,14 @@ export default class WaveMode {
         this.drawScore();
         this.drawHealth();
         this.drawAvailableTowers();
+        this.drawAvailablePowerUps();
         this.drawBackground();
         this.drawPath();
         this.drawGrid();
         this.drawSelectedAvailableTower();
+        this.drawSelectedAvailablePowerUp();
         this.drawTowers();
+        this.drawPowerUps();
         this.drawSelectedPlacedTowerRange();
         this.drawSelectedPlacedTowerOptions();
         this.drawEnemy();
@@ -517,7 +620,29 @@ export default class WaveMode {
     } else {
       this.updateWave();
       this.updateEnemies();
+      this.updatePowerUps();
       this.updateTowers();
+    }
+  }
+  updatePowerUps() {
+    for (let i = 0; i < this.powerups.length; i++) {
+      if (this.powerups[i].update()) {
+        this.powerups.splice(i, 1);
+        i--;
+      }
+    }
+
+    for (let i = 0; i < this.powerups.length; i++) {
+      //collision between powerUp and enemy
+      for (let j = 0; j < this.enemies.length; j++) {
+        if (!collision(this.powerups[i], this.enemies[j])) {
+          this.enemies[j].resetVelocity();
+          console.log("not collided");
+          return;
+        }
+        console.log("heree");
+        this.enemies[j].changeVelocity(1);
+      }
     }
   }
 
@@ -533,6 +658,9 @@ export default class WaveMode {
   updateEnemies() {
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].update();
+      if (this.powerups.length === 0) {
+        this.enemies[i].resetVelocity();
+      }
       if (!this.enemies[i].getHp()) {
         this.coin += this.enemies[i].coinGain;
         this.enemies.splice(i, 1);
@@ -690,6 +818,64 @@ export default class WaveMode {
     );
     this.context.globalAlpha = 1;
     this.context.closePath();
+  }
+
+  drawSelectedAvailablePowerUp() {
+    let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
+    let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
+    if (this.selectedAvailablePowerUp === undefined || gridY < 2) return;
+    this.context.beginPath();
+    this.context.globalAlpha = 0.2;
+    let srcX = 0;
+    let srcY = 0;
+    let srcWidth = 16;
+    let srcHeight = 16;
+    this.context.drawImage(
+      this.availablePowerups[this.selectedAvailablePowerUp].img,
+      srcX,
+      srcY,
+      srcWidth,
+      srcHeight,
+      gridX * this.availablePowerups[this.selectedAvailablePowerUp].width,
+      gridY * this.availablePowerups[this.selectedAvailablePowerUp].height,
+      this.availablePowerups[this.selectedAvailablePowerUp].width,
+      this.availablePowerups[this.selectedAvailablePowerUp].height
+    );
+    this.context.globalAlpha = 1;
+    this.context.closePath();
+  }
+
+  placePowerUp() {
+    let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
+    let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
+    if (this.selectedAvailablePowerUp === undefined || gridY < 2) return;
+
+    //if co-ordinate matches already placed powerups
+    if (
+      this.powerups.some((powerup) => {
+        let powerupGridX = Math.floor(powerup.x / CellDimensions.WIDTH);
+        let powerupGridY = Math.floor(powerup.y / CellDimensions.HEIGHT);
+        return powerupGridX === gridX && powerupGridY === gridY;
+      })
+    ) {
+      this.selectedAvailablePowerUp = undefined;
+      return;
+    }
+
+    let powerup;
+    switch (this.selectedAvailablePowerUp) {
+      case 0:
+        powerup = new SlowEnemy(
+          gridX * CellDimensions.WIDTH,
+          gridY * CellDimensions.HEIGHT,
+          this.context
+        );
+        break;
+    }
+    if (powerup!.cost > this.coin) return;
+    this.coin -= powerup!.cost;
+    this.powerups.push(powerup);
+    this.selectedAvailablePowerUp = undefined;
   }
 
   /* The method called `handleMouseMove` that takes a MouseEvent as a parameter.

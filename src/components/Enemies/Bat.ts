@@ -12,6 +12,7 @@ export default class Bat {
   coinGain: number;
   prevPath: { x: number; y: number }[];
   targetPath?: { x: number; y: number };
+  velocity: number;
   context: CanvasRenderingContext2D;
   img: CanvasImageSource;
   srcX: number;
@@ -37,7 +38,9 @@ export default class Bat {
     }
     this.maxSpriteFrame = 5;
     this.dy = 0;
-    this.dx = 2;
+    this.velocity = 2;
+    this.dx = this.velocity;
+
     this.coinGain = 30;
     this.srcX = 0;
     this.hp = 100;
@@ -151,7 +154,7 @@ export default class Bat {
     let gridY = Math.floor(this.y / CellDimensions.HEIGHT);
 
     if (this.x < 0) {
-      this.dx = 2;
+      this.dx = this.velocity;
       this.x += this.dx;
       this.y += this.dy;
 
@@ -196,27 +199,37 @@ export default class Bat {
     let targetX = this.targetPath!.x * CellDimensions.WIDTH;
     let targetY = this.targetPath!.y * CellDimensions.WIDTH;
     if (targetX > this.x) {
-      this.dx = 2;
+      this.dx = this.velocity;
       this.dy = 0;
     }
     if (targetX < this.x) {
-      this.dx = -2;
+      this.dx = -this.velocity;
       this.dy = 0;
     }
 
     if (targetY > this.y) {
       this.dx = 0;
-      this.dy = 2;
+      this.dy = this.velocity;
     }
     if (targetY < this.y) {
       this.dx = 0;
-      this.dy = -2;
+      this.dy = -this.velocity;
     }
     if (this.prevPath.length === this.pathPos.length) {
-      this.dx = 2;
+      this.dx = this.velocity;
       this.dy = 0;
     }
     this.x += this.dx;
     this.y += this.dy;
+  }
+
+  //reset velocity
+  resetVelocity() {
+    this.velocity = 2;
+    console.log("rest done");
+  }
+
+  changeVelocity(newVelocity: number) {
+    this.velocity = newVelocity;
   }
 }
