@@ -123,6 +123,15 @@ export default class Level2 {
     this.catapultTower.img.src = CatapultTowerImg;
     this.cannonL1Tower.img.src = CannonL1TowerHead;
     this.moonTower.img.src = MoonTowerImg;
+    /**
+     * The function updates the status of an enemy target, locks onto the enemy if within range, fires
+     * projectiles at the locked enemy, and checks for collisions and enemy death.
+     * @param {any} enemy - The `update` function you provided seems to be part of a game or simulation
+     * where you are handling enemy targeting and firing projectiles from a cannon. Let's break down the
+     * function and the parameters involved:
+     * @returns If the locked enemy is out of range, the function returns early after resetting the
+     * locked status and target enemy.
+     */
     this.machineGunTower.img.src = MachineGunTowerHead;
     this.availableTowers = [];
     this.availableTowers.push(this.cannonL1Tower);
@@ -699,6 +708,10 @@ export default class Level2 {
     );
   }
 
+  /**
+   * The `draw` function in TypeScript is responsible for rendering various elements of a game, such as
+   * resources, score, towers, enemies, and more.
+   */
   draw() {
     this.drawResources();
     this.drawScore();
@@ -957,6 +970,15 @@ export default class Level2 {
     this.context.closePath();
   }
 
+  /**
+   * The function `placePowerUp` determines the grid position of a power-up based on mouse coordinates
+   * and places it on the grid if conditions are met.
+   * @returns If the condition `this.selectedAvailablePowerUp === undefined || gridY < 2` is met, the
+   * function will return early without placing a power-up. If the coordinates match an already placed
+   * power-up, the function will also return early without placing a new power-up. If the cost of the
+   * selected power-up is greater than the available coins, the function will return without placing
+   * the power-up.
+   */
   placePowerUp() {
     let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
     let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
@@ -997,6 +1019,9 @@ offsetY properties of the MouseEvent. */
     this.mouse.x = e.offsetX;
     this.mouse.y = e.offsetY;
   };
+  /**
+   * The `createGrid` function generates a grid of cells on a canvas based on specified dimensions.
+   */
   createGrid() {
     for (
       let i = CellDimensions.HEIGHT * 2;
@@ -1009,6 +1034,15 @@ offsetY properties of the MouseEvent. */
     }
   }
 
+  /**
+   * The `placeTower` function in TypeScript checks if a tower can be placed at a specific grid location
+   * on a game board and deducts the cost of the tower from the player's coins if placement is valid.
+   * @returns The `placeTower()` function returns nothing (`undefined`) in most cases. It will return
+   * early and not proceed with tower placement if any of the following conditions are met:
+   * 1. If the tower placement blocks the path (`this.pathsPos` contains the same coordinates).
+   * 2. If no tower is selected (`this.selectedAvailableTower` is undefined) or if the gridY value is
+   * less than 2
+   */
   placeTower() {
     let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
     let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
@@ -1064,8 +1098,7 @@ offsetY properties of the MouseEvent. */
         );
         break;
     }
-    console.log(tower!.cost);
-    console.log(tower!.cost[tower!.curLevel - 1]);
+
     if (tower!.cost[tower!.curLevel - 1] > this.coin) return;
     this.coin -= tower!.cost[tower!.curLevel - 1];
     this.towers.push(tower!);

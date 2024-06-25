@@ -57,6 +57,8 @@ export default class Cannon {
     this.numberOfProjectilePerFire = 1;
   }
 
+/* The `draw()` method in the provided TypeScript class `Cannon` is responsible for rendering the
+cannon tower on a canvas. Here's a breakdown of what it does: */
   draw() {
     //draw projectiles
     this.drawProjectiles();
@@ -184,6 +186,10 @@ export default class Cannon {
       this.targetEnemy = undefined;
     }
   }
+/**
+ * The function `drawExplosions` iterates through an array of explosions and calls the `draw` method on
+ * each explosion.
+ */
 
   drawExplosions() {
     for (let i = 0; i < this.explosions.length; i++) {
