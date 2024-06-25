@@ -515,7 +515,6 @@ export default class Level1 {
       if (this.enemies[i]?.x > CanvasDimension.WIDTH) {
         this.health--;
         this.enemies.splice(i, 1);
-
         i--;
       }
     }

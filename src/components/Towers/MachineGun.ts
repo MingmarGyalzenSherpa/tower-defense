@@ -185,36 +185,21 @@ export default class MachineGun {
   }
 
   updateProjectiles() {
-    let unitVector;
-    if (this.targetEnemy) {
-      let enemyCenterX = this.targetEnemy.x + this.targetEnemy.width / 2;
-      let enemyCenterY = this.targetEnemy.y + this.targetEnemy.height / 2;
-      let towerCenterX = this.x + this.width / 2;
-      let towerCenterY = this.y + this.height / 2;
-      let vector = {
-        x: enemyCenterX - towerCenterX,
-        y: enemyCenterY - towerCenterY,
-      };
-
-      let dist = Math.hypot(vector.x, vector.y);
-      unitVector = {
-        x: vector.x / dist,
-        y: vector.y / dist,
-      };
-    }
     for (let i = 0; i < this.projectiles.length; i++) {
-      if (this.targetEnemy) {
-        this.projectiles[i].unitVector = unitVector!;
-      }
       this.projectiles[i].update();
     }
   }
 
   checkProjectileCollision() {
     if (!this.targetEnemy) return;
+
     for (let i = 0; i < this.projectiles.length; i++) {
+      console.log(this.projectiles[i].targetEnemy);
       //decrease the hp
-      if (collision(this.targetEnemy, this.projectiles[i])) {
+      if (
+        collision(this.targetEnemy, this.projectiles[i]) ||
+        this.projectiles[i].targetEnemy.hp <= 0
+      ) {
         this.targetEnemy.decreaseHp(this.damage);
         this.projectiles.splice(i, 1);
         i--;

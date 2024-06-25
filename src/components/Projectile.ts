@@ -16,6 +16,7 @@ export default class Projectile {
     y: number;
     width: number;
     height: number;
+    hp: number;
   };
   prevTime: number;
   timeRate: number;
@@ -34,6 +35,7 @@ export default class Projectile {
       y: number;
       width: number;
       height: number;
+      hp: number;
     }
   ) {
     this.context = context;
