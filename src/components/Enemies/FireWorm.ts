@@ -1,6 +1,6 @@
 import { CellDimensions } from "../../constants/constants";
-import SkeletonSprite from "../../assets/enemy/Skeleton enemy.png";
-export default class Skeleton {
+import FireWormSprite from "../../assets/enemy/fireworm.png";
+export default class FireWorm {
   x: number;
   y?: number;
   width: number;
@@ -15,7 +15,9 @@ export default class Skeleton {
   context: CanvasRenderingContext2D;
   img: CanvasImageSource;
   srcX: number;
+  maxSpriteFrame: number;
   imgWidth: number;
+  imgHeight: number;
   frame: number;
   pathPos: { x: number; y: number }[];
   constructor(
@@ -33,15 +35,17 @@ export default class Skeleton {
       this.y = startingPath.y * CellDimensions.HEIGHT;
       this.targetPath = startingPath;
     }
+    this.maxSpriteFrame = 9;
     this.dy = 0;
     this.dx = 2;
     this.coinGain = 20;
     this.srcX = 0;
     this.hp = 400;
     this.maxHp = 400;
-    this.imgWidth = 45;
+    this.imgWidth = 70;
+    this.imgHeight = 90;
     this.img = new Image();
-    this.img.src = SkeletonSprite;
+    this.img.src = FireWormSprite;
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;
     this.frame = 0;
@@ -56,16 +60,16 @@ export default class Skeleton {
   draw() {
     if (this.y === undefined) return;
     if (this.frame % 10 === 0) {
-      this.srcX = (this.srcX + 1) % 12;
+      this.srcX = (this.srcX + 1) % this.maxSpriteFrame;
     }
     this.context.beginPath();
     this.context.fillStyle = "red";
     this.context.drawImage(
       this.img,
       this.srcX * (this.imgWidth + 20),
-      137,
+      0,
       this.imgWidth,
-      52,
+      this.imgHeight,
       this.x,
       this.y,
       this.width,
