@@ -358,60 +358,83 @@ export default class Level1 {
     if (this.selectedDroppedTowerIndex === undefined) return;
 
     let selectedDroppedTower = this.towers[this.selectedDroppedTowerIndex];
-    if (selectedDroppedTower.curLevel === selectedDroppedTower.maxLevel) return;
+    if (selectedDroppedTower.curLevel !== selectedDroppedTower.maxLevel) {
+      //update the x,y of selectedPlacedTowerOptions
+      this.selectedPlacedTowerOptions.upgrade.x = selectedDroppedTower.x;
+      this.selectedPlacedTowerOptions.upgrade.y =
+        selectedDroppedTower.y + CellDimensions.HEIGHT;
 
-    //update the x,y of selectedPlacedTowerOptions
-    this.selectedPlacedTowerOptions.upgrade.x = selectedDroppedTower.x;
-    this.selectedPlacedTowerOptions.upgrade.y =
-      selectedDroppedTower.y + CellDimensions.HEIGHT;
+      this.selectedPlacedTowerOptions.break.x = selectedDroppedTower.x;
+      this.selectedPlacedTowerOptions.break.y =
+        this.selectedPlacedTowerOptions.upgrade.y! +
+        this.selectedPlacedTowerOptions.upgrade.height;
 
-    this.selectedPlacedTowerOptions.break.x = selectedDroppedTower.x;
-    this.selectedPlacedTowerOptions.break.y =
-      this.selectedPlacedTowerOptions.upgrade.y! +
-      this.selectedPlacedTowerOptions.upgrade.height;
+      this.context.beginPath();
+      this.context.fillStyle = "green";
+      this.context.fillRect(
+        this.selectedPlacedTowerOptions.upgrade.x!,
+        this.selectedPlacedTowerOptions.upgrade.y!,
+        this.selectedPlacedTowerOptions.upgrade.width,
+        this.selectedPlacedTowerOptions.upgrade.height
+      );
+      this.context.closePath();
 
-    this.context.beginPath();
-    this.context.fillStyle = "green";
-    this.context.fillRect(
-      this.selectedPlacedTowerOptions.upgrade.x!,
-      this.selectedPlacedTowerOptions.upgrade.y!,
-      this.selectedPlacedTowerOptions.upgrade.width,
-      this.selectedPlacedTowerOptions.upgrade.height
-    );
-    this.context.closePath();
+      this.context.beginPath();
+      this.context.fillStyle = "black";
+      this.context.font = "bold 14px Audiowide";
+      this.context.fillText(
+        "UPGRADE",
+        selectedDroppedTower.x,
+        selectedDroppedTower.y +
+          CellDimensions.HEIGHT +
+          selectedDroppedTower.height / 4
+      );
 
-    this.context.beginPath();
-    this.context.fillStyle = "black";
-    this.context.font = "bold 14px Audiowide";
-    this.context.fillText(
-      "UPGRADE",
-      selectedDroppedTower.x,
-      selectedDroppedTower.y +
-        CellDimensions.HEIGHT +
-        selectedDroppedTower.height / 4
-    );
+      this.context.closePath();
+      this.context.beginPath();
+      this.context.fillStyle = "red";
+      this.context.fillRect(
+        this.selectedPlacedTowerOptions.break.x!,
+        this.selectedPlacedTowerOptions.break.y!,
+        this.selectedPlacedTowerOptions.break.width,
+        this.selectedPlacedTowerOptions.break.height
+      );
+      this.context.closePath();
+      this.context.font = "bold 14px Audiowide";
+      this.context.fillStyle = "black";
 
-    this.context.closePath();
+      this.context.fillText(
+        "BREAK",
+        selectedDroppedTower.x,
+        selectedDroppedTower.y +
+          CellDimensions.HEIGHT +
+          selectedDroppedTower.height / 2
+      );
+    } else {
+      this.selectedPlacedTowerOptions.break.x = selectedDroppedTower.x;
+      this.selectedPlacedTowerOptions.break.y =
+        selectedDroppedTower.y + CellDimensions.HEIGHT;
+      this.context.closePath();
+      this.context.beginPath();
+      this.context.fillStyle = "red";
+      this.context.fillRect(
+        this.selectedPlacedTowerOptions.break.x!,
+        this.selectedPlacedTowerOptions.break.y!,
+        this.selectedPlacedTowerOptions.break.width,
+        this.selectedPlacedTowerOptions.break.height
+      );
+      this.context.closePath();
+      this.context.font = "bold 14px Audiowide";
+      this.context.fillStyle = "black";
 
-    this.context.beginPath();
-    this.context.fillStyle = "red";
-    this.context.fillRect(
-      this.selectedPlacedTowerOptions.break.x!,
-      this.selectedPlacedTowerOptions.break.y!,
-      this.selectedPlacedTowerOptions.break.width,
-      this.selectedPlacedTowerOptions.break.height
-    );
-    this.context.closePath();
-    this.context.font = "bold 14px Audiowide";
-    this.context.fillStyle = "black";
-
-    this.context.fillText(
-      "BREAK",
-      selectedDroppedTower.x,
-      selectedDroppedTower.y +
-        CellDimensions.HEIGHT +
-        selectedDroppedTower.height / 2
-    );
+      this.context.fillText(
+        "BREAK",
+        selectedDroppedTower.x,
+        selectedDroppedTower.y +
+          CellDimensions.HEIGHT +
+          selectedDroppedTower.height / 4
+      );
+    }
   }
 
   drawHealth() {

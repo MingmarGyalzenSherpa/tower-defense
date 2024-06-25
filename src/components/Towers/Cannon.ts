@@ -186,6 +186,7 @@ export default class Cannon {
   }
 
   drawExplosions() {
+    console.log(this.explosions);
     for (let i = 0; i < this.explosions.length; i++) {
       this.explosions[i].draw();
     }
@@ -224,6 +225,9 @@ export default class Cannon {
         this.projectiles[i].targetEnemy.hp <= 0
       ) {
         this.targetEnemy.decreaseHp(this.damage);
+        this.explosions.push(
+          new Explosion(this.targetEnemy.x, this.targetEnemy.y, this.context)
+        );
         this.projectiles.splice(i, 1);
         i--;
       }
