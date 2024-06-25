@@ -64,7 +64,7 @@ export default class GameManager {
     this.context = context;
     this.mouse = new Mouse();
     this.context.fillStyle = "black";
-    this.gameState = GameState.WAITING;
+    this.gameState = GameState.OVER;
     this.startBtn = {
       x: CanvasDimension.WIDTH / 2.5,
       y: CanvasDimension.HEIGHT / 2.5,
@@ -258,13 +258,40 @@ export default class GameManager {
     };
 
     this.context.textAlign = "center";
-
     this.context.font = "50px Audiowide";
-    this.context.fillStyle = "red";
-    let gameOverY = this.playAgainBtn.y - 50;
-    let gameOverX = this.playAgainBtn.x + this.playAgainBtn.width / 2;
-    this.context.fillText("GAME OVER", gameOverX, gameOverY);
-    this.context.font = "22px Audiowide";
+    // level complete
+    if (
+      this.curLevel.currentWave === this.curLevel.waveConfig.length &&
+      this.curLevel.enemies.length === 0
+    ) {
+      let levelCompleteTextX =
+        this.playAgainBtn.x + this.playAgainBtn.width / 2;
+      let levelCompleteTextY = this.playAgainBtn.y - 80;
+      let scoreTextX = levelCompleteTextX;
+      let scoreTextY = levelCompleteTextY + 40;
+      //draw level complete
+      this.context.fillStyle = "green";
+      this.context.fillText(
+        "LEVEL COMPLETE",
+        levelCompleteTextX,
+        levelCompleteTextY
+      );
+      this.context.font = "25px Audiowide";
+
+      this.context.fillText(
+        `SCORE: ${this.curLevel.score}`,
+        scoreTextX,
+        scoreTextY
+      );
+    } else {
+      this.context.fillStyle = "red";
+      this.context.font = "50px Audiowide";
+
+      let gameOverY = this.playAgainBtn.y - 50;
+      let gameOverX = this.playAgainBtn.x + this.playAgainBtn.width / 2;
+      this.context.fillText("GAME OVER", gameOverX, gameOverY);
+      this.context.font = "22px Audiowide";
+    }
 
     let textOffsetY = 20;
     this.context.fillStyle = this.playAgainBtn.color;
@@ -339,7 +366,11 @@ export default class GameManager {
 
   //check if the game is over
   checkGameOver() {
-    if (this.curLevel.health <= 0) {
+    if (
+      this.curLevel.health <= 0 ||
+      (this.curLevel.currentWave === this.curLevel.waveConfig.length &&
+        this.curLevel.enemies.length === 0)
+    ) {
       this.gameState = GameState.OVER;
     }
   }
