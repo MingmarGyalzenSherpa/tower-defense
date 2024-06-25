@@ -228,6 +228,138 @@ export default class WaveMode {
           },
         ],
       },
+      {
+        enemies: [
+          {
+            type: "Skeleton",
+            count: 3,
+          },
+          {
+            type: "Orc",
+            count: 3,
+          },
+          {
+            type: "FireWorm",
+            count: 5,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Bat",
+            count: 3,
+          },
+          {
+            type: "Orc",
+            count: 3,
+          },
+          {
+            type: "FireWorm",
+            count: 5,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Skeleton",
+            count: 3,
+          },
+          {
+            type: "Orc",
+            count: 5,
+          },
+          {
+            type: "FireWorm",
+            count: 8,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Skeleton",
+            count: 5,
+          },
+          {
+            type: "Orc",
+            count: 6,
+          },
+          {
+            type: "FireWorm",
+            count: 5,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Bat",
+            count: 10,
+          },
+          {
+            type: "Skeleton",
+            count: 3,
+          },
+          {
+            type: "Orc",
+            count: 3,
+          },
+          {
+            type: "FireWorm",
+            count: 5,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "FireWorm",
+            count: 3,
+          },
+          {
+            type: "Orc",
+            count: 3,
+          },
+          {
+            type: "Golem",
+            count: 5,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "FireWorm",
+            count: 3,
+          },
+          {
+            type: "Orc",
+            count: 3,
+          },
+          {
+            type: "Golem",
+            count: 8,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Skeleton",
+            count: 8,
+          },
+          {
+            type: "Orc",
+            count: 5,
+          },
+          {
+            type: "Golem",
+            count: 3,
+          },
+        ],
+      },
     ];
     this.currentWave = 0;
     this.waveInProgress = false;
@@ -728,6 +860,11 @@ export default class WaveMode {
               this.pathsPos
             );
             break;
+          case "Golem":
+            enemy = new Golem(this.context, this.initialEnemyX, this.pathsPos);
+            break;
+          default:
+            enemy = new Bat(this.context, this.initialEnemyX, this.pathsPos);
         }
         this.enemies.push(enemy);
       }

@@ -1,5 +1,4 @@
 import { CellDimensions } from "../../constants/constants";
-import OrcSprite from "../../assets/enemy/orc.png";
 import GolemSprite from "../../assets/enemy/walking-ice-golem-48px.png";
 export default class Golem {
   x: number;
