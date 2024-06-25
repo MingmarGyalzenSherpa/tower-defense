@@ -789,8 +789,10 @@ offsetY properties of the MouseEvent. */
         );
         break;
     }
-    if (tower!.cost[tower!.curLevel] > this.coin) return;
-    this.coin -= tower!.cost[tower!.curLevel];
+    console.log(tower!.cost);
+    console.log(tower!.cost[tower!.curLevel - 1]);
+    if (tower!.cost[tower!.curLevel - 1] > this.coin) return;
+    this.coin -= tower!.cost[tower!.curLevel - 1];
     this.towers.push(tower!);
     this.selectedAvailableTower = undefined;
   }
