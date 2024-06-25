@@ -40,8 +40,8 @@ export default class Bat {
     this.dx = 2;
     this.coinGain = 30;
     this.srcX = 0;
-    this.hp = 200;
-    this.maxHp = 200;
+    this.hp = 100;
+    this.maxHp = this.hp;
     this.imgWidth = 16;
     this.imgHeight = 20;
     this.img = new Image();

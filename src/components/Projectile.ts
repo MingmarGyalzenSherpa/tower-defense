@@ -101,6 +101,5 @@ export default class Projectile {
     }
     this.x += this.unitVector.x * this.speed * diff;
     this.y += this.unitVector.y * this.speed * diff;
-    console.log({ x: this.x, y: this.y });
   }
 }

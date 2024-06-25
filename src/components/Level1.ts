@@ -60,15 +60,17 @@ export default class Level1 {
   waveEnemySpawned: boolean;
   waveInterval: number;
   initialEnemyX?: number;
+  score: number;
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
     this.canvas = canvas;
     this.context = context;
     this.mouse = new Mouse();
     this.coinImg = new Image();
     this.coinImg.src = CoinImg;
+    this.score = 0;
     this.enemies = [];
     this.grids = [];
-    this.coin = 500;
+    this.coin = 280;
     this.frame = 0;
     this.bgImg = new Image();
     this.bgImg.src = Tiles;
@@ -321,6 +323,7 @@ export default class Level1 {
   }
 
   handlePlaceTowersOptionClick() {
+    let tower = this.towers[this.selectedDroppedTowerIndex!];
     if (
       collision(this.mouse, {
         ...this.selectedPlacedTowerOptions.upgrade,
@@ -328,8 +331,14 @@ export default class Level1 {
         y: this.selectedPlacedTowerOptions.upgrade.y!,
       })
     ) {
-      console.log("hehe");
-      this.towers[this.selectedDroppedTowerIndex!].upgrade();
+      console.log(tower);
+      console.log(tower.cost);
+      console.log(tower.curLevel);
+      console.log(tower.cost[tower.curLevel]);
+      console.log(this.coin);
+      if (tower.cost[tower.curLevel] > this.coin) return;
+      this.coin -= tower.cost[tower.curLevel];
+      tower.upgrade();
     }
 
     if (
@@ -500,8 +509,22 @@ export default class Level1 {
     }
   }
 
+  drawScore() {
+    let scoreGridX = 11;
+    let scoreY = 60;
+    this.context.beginPath();
+    this.context.font = "20px Audiowide";
+    this.context.fillStyle = "black";
+    this.context.fillText(
+      `Score: ${this.score}`,
+      scoreGridX * CellDimensions.WIDTH,
+      scoreY
+    );
+  }
+
   draw() {
     this.drawResources();
+    this.drawScore();
     this.drawCoin();
     this.drawHealth();
     this.drawAvailableTowers();
@@ -544,6 +567,7 @@ export default class Level1 {
       this.enemies[i].update();
       if (!this.enemies[i].getHp()) {
         this.coin += this.enemies[i].coinGain;
+        this.score += this.enemies[i].coinGain;
         this.enemies.splice(i, 1);
 
         i--;

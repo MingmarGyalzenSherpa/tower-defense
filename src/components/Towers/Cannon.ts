@@ -186,7 +186,6 @@ export default class Cannon {
   }
 
   drawExplosions() {
-    console.log(this.explosions);
     for (let i = 0; i < this.explosions.length; i++) {
       this.explosions[i].draw();
     }
@@ -202,7 +201,6 @@ export default class Cannon {
   }
 
   drawProjectiles() {
-    console.log(this.projectiles);
     for (let i = 0; i < this.projectiles.length; i++) {
       if (this.isLocked) this.projectiles[i].draw(this.targetEnemy);
     }
@@ -218,7 +216,6 @@ export default class Cannon {
     if (!this.targetEnemy) return;
 
     for (let i = 0; i < this.projectiles.length; i++) {
-      console.log(this.projectiles[i].targetEnemy);
       //decrease the hp
       if (
         collision(this.targetEnemy, this.projectiles[i]) ||
