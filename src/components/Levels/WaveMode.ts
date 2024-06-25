@@ -409,6 +409,7 @@ export default class WaveMode {
           })
         ) {
           this.selectedAvailableTower = i;
+          this.selectedAvailablePowerUp = undefined;
         }
       }
 
@@ -701,7 +702,7 @@ export default class WaveMode {
   }
 
   drawScore() {
-    let scoreGridX = 11;
+    let scoreGridX = 12;
     let scoreY = 60;
     this.context.beginPath();
     this.context.font = "20px Audiowide";
@@ -789,26 +790,28 @@ export default class WaveMode {
   }
 
   updateEnemies() {
-    for (let i = 0; i < this.enemies.length; i++) {
-      this.enemies[i].update();
-      if (this.powerups.length === 0) {
-        this.enemies[i].resetVelocity();
-      }
-      if (!this.enemies[i].getHp()) {
-        this.coin += this.enemies[i].coinGain;
-        this.enemies.splice(i, 1);
+    for (let i = this.enemies.length - 1; i >= 0; i--) {
+      const enemy = this.enemies[i];
 
-        i--;
+      enemy.update();
+
+      if (this.powerups.length === 0) {
+        enemy.resetVelocity();
       }
-      if (this.enemies[i].x > CanvasDimension.WIDTH) {
+
+      if (!enemy.getHp()) {
+        this.coin += enemy.coinGain;
+        this.enemies.splice(i, 1);
+        continue;
+      }
+
+      if (enemy.x > CanvasDimension.WIDTH) {
         this.health--;
         this.enemies.splice(i, 1);
-
-        i--;
+        continue;
       }
     }
   }
-
   updateWave() {
     //check if  wave is ongoing
     if (!this.waveInProgress && this.currentWave < this.waveConfig.length) {

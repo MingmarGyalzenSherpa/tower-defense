@@ -74,7 +74,7 @@ export default class Level1 {
     this.frame = 0;
     this.bgImg = new Image();
     this.bgImg.src = Tiles;
-    this.health = 1;
+    this.health = 10;
     this.healthImg = new Image();
     this.healthImg.src = HealthImg;
     this.cannonL1Tower = {
@@ -210,11 +210,7 @@ export default class Level1 {
         y: 5,
       },
     ];
-    // this.enemies.push(new Orc(this.context, this.pathsPos));
-    // this.enemies.push(new Skeleton(this.context, this.pathsPos));
-    // this.enemies.push(new FireWorm(this.context, this.pathsPos));
-    // this.enemies.push(new Bat(this.context, this.pathsPos));
-    //wave
+
     this.waveConfig = [
       {
         enemies: [
@@ -276,6 +272,16 @@ export default class Level1 {
     this.canvas.addEventListener("click", this.handleClick);
   }
 
+  /* The above TypeScript code defines a `handleClick` method that performs the following actions:
+  1. It iterates over the `availableTowers` array to check if the mouse cursor position collides
+  with any of the available towers.
+  2. If a collision is detected, it sets the `selectedAvailableTower` property to the index of the
+  tower that was clicked.
+  3. It then calls the `placeTower` method to place the tower.
+  4. It calls the `handlePlaceTowersOptionClick` method to handle any options related to placing
+  towers.
+*/
+
   handleClick = () => {
     //check if resource tower is clicked
     for (let i = 0; i < this.availableTowers.length; i++) {
@@ -300,6 +306,10 @@ export default class Level1 {
     this.handlePlacedTowerClick();
   };
 
+  /**
+   * The function `handlePlacedTowerClick` iterates through the towers and sets the
+   * selectedDroppedTowerIndex based on collision detection with the mouse.
+   */
   handlePlacedTowerClick() {
     for (let i = 0; i < this.towers.length; i++) {
       if (
@@ -316,16 +326,22 @@ export default class Level1 {
         this.selectedDroppedTowerIndex = undefined;
       }
     }
-
-    console.log(this.selectedDroppedTowerIndex);
   }
 
+  /**
+   * The `clean` function removes event listeners for mousemove and click events from a canvas element.
+   */
   clean() {
-    console.log("hey");
     this.canvas.removeEventListener("mousemove", this.handleMouseMove);
     this.canvas.removeEventListener("click", this.handleClick);
   }
 
+  /**
+   * The function `handlePlaceTowersOptionClick` checks for collision with upgrade and break options for
+   * a selected tower and performs corresponding actions.
+   * @returns If the condition `tower.cost[tower.curLevel] > this.coin` is true, then `undefined` will
+   * be returned. Otherwise, the function will continue executing without explicitly returning a value.
+   */
   handlePlaceTowersOptionClick() {
     let tower = this.towers[this.selectedDroppedTowerIndex!];
     if (
@@ -335,11 +351,6 @@ export default class Level1 {
         y: this.selectedPlacedTowerOptions.upgrade.y!,
       })
     ) {
-      console.log(tower);
-      console.log(tower.cost);
-      console.log(tower.curLevel);
-      console.log(tower.cost[tower.curLevel]);
-      console.log(this.coin);
       if (tower.cost[tower.curLevel] > this.coin) return;
       this.coin -= tower.cost[tower.curLevel];
       tower.upgrade();
@@ -357,6 +368,12 @@ export default class Level1 {
     }
   }
 
+  /**
+   * The function `drawSelectedPlacedTowerRange` draws a red circular range indicator around a selected
+   * tower on a canvas with reduced opacity.
+   * @returns If the `selectedDroppedTowerIndex` is `undefined`, the function will return early and
+   * nothing will be drawn.
+   */
   drawSelectedPlacedTowerRange() {
     if (this.selectedDroppedTowerIndex === undefined) return;
     let selectedDroppedTower = this.towers[this.selectedDroppedTowerIndex];
@@ -373,6 +390,12 @@ export default class Level1 {
     this.context.closePath();
   }
 
+  /**
+   * The function `drawSelectedPlacedTowerOptions` draws upgrade and break options for a selected tower
+   * if it is not at max level, otherwise it only displays the break option.
+   * @returns The `drawSelectedPlacedTowerOptions()` function is returning nothing (`undefined`) if the
+   * `selectedDroppedTowerIndex` is undefined.
+   */
   drawSelectedPlacedTowerOptions() {
     if (this.selectedDroppedTowerIndex === undefined) return;
 
@@ -456,6 +479,10 @@ export default class Level1 {
     }
   }
 
+  /**
+   * The drawHealth function in TypeScript draws a health image and text on a canvas with specified
+   * dimensions and styles.
+   */
   drawHealth() {
     let offsetX = 10;
     this.context.beginPath();
@@ -479,6 +506,10 @@ export default class Level1 {
     );
   }
 
+  /**
+   * The `drawCoin` function in TypeScript draws a coin image on a canvas along with the current number
+   * of coins.
+   */
   drawCoin() {
     let offsetX = 10;
     let offsetY = 10;
@@ -501,20 +532,21 @@ export default class Level1 {
     this.context.closePath();
   }
 
-  // generateEnemy() {
-  //   if (this.frame % 200 === 0 && this.frame % 600 != 0) {
-  //     this.enemies.push(new Orc(this.context, this.pathsPos));
-  //   }
-  // }
-
+  /**
+   * The drawEnemy function iterates through an array of enemies and calls the draw method for each
+   * enemy.
+   */
   drawEnemy() {
     for (let i = 0; i < this.enemies.length; i++) {
       this.enemies[i].draw();
     }
   }
 
+  /**
+   * The function `drawScore` in TypeScript draws the current score on a canvas at a specific position.
+   */
   drawScore() {
-    let scoreGridX = 11;
+    let scoreGridX = 12;
     let scoreY = 60;
     this.context.beginPath();
     this.context.font = "20px Audiowide";
@@ -803,8 +835,6 @@ offsetY properties of the MouseEvent. */
         );
         break;
     }
-    console.log(tower!.cost);
-    console.log(tower!.cost[tower!.curLevel - 1]);
     if (tower!.cost[tower!.curLevel - 1] > this.coin) return;
     this.coin -= tower!.cost[tower!.curLevel - 1];
     this.towers.push(tower!);

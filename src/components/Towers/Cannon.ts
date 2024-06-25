@@ -37,7 +37,7 @@ export default class Cannon {
     this.curLevel = 1;
     this.maxLevel = 2;
     this.range = 200;
-    this.cost = [80, 150, 200];
+    this.cost = [80, 150];
     this.isLocked = false;
     this.explosions = [];
     this.width = CellDimensions.WIDTH;

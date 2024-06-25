@@ -50,10 +50,19 @@ export default class Orc {
     this.prevPath = [];
   }
 
+  /**
+   * The `getHp` function in TypeScript returns the value of the `hp` property.
+   * @returns The `hp` property of the object.
+   */
   getHp(): number {
     return this.hp;
   }
 
+  /**
+   * The draw function updates the sprite frame and draws an image on a canvas along with a health bar.
+   * @returns If the `this.y` property is `undefined`, the `draw()` function will return early and not
+   * execute the rest of the code.
+   */
   draw() {
     if (this.y === undefined) return;
 
@@ -79,6 +88,11 @@ export default class Orc {
     this.drawHpBar();
   }
 
+  /**
+   * The `drawHpBar` function draws a health bar on a canvas based on the current and maximum health
+   * values of an object.
+   */
+
   drawHpBar() {
     let hpPercentage = (this.hp / this.maxHp) * 100;
     let offsetY = 10;
@@ -96,11 +110,24 @@ export default class Orc {
     this.context.closePath();
   }
 
+  /**
+   * The function "decreaseHp" reduces the hit points (hp) by a specified amount of damage and ensures
+   * the hp does not go below 0.
+   * @param {number} damage - The `damage` parameter represents the amount of damage that will be
+   * subtracted from the current hit points (`hp`) of an entity or character.
+   */
   decreaseHp(damage: number) {
     this.hp -= damage;
     if (this.hp < 0) this.hp = 0;
   }
 
+  /**
+   * The function updates the position of an object based on a grid system and moves it towards target
+   * paths while avoiding previous paths.
+   * @returns The `update()` function returns nothing explicitly. It performs various calculations and
+   * updates the position of an object based on certain conditions and parameters, but it does not have
+   * a return value specified.
+   */
   update() {
     this.frame++;
     if (this.y === undefined) return;
@@ -179,11 +206,20 @@ export default class Orc {
     this.y += this.dy;
   }
 
-  //reset velocity
+  /* The `resetVelocity()` method  is setting the `velocity` property of the `Bat`
+ object back to its default value of 2. This method is used to reset the velocity of the bat entity
+ to a specific value, in this case, 2. This can be useful when you want to reset the velocity of the
+ bat to a default value during certain game events or conditions. */
   resetVelocity() {
     this.velocity = 0.5;
   }
 
+  /**
+   * The function `changeVelocity` updates the velocity property of an object with a new value.
+   * @param {number} newVelocity - The `newVelocity` parameter in the `changeVelocity` function is a
+   * number that represents the new velocity value that will be assigned to the `velocity` property of
+   * the object.
+   */
   changeVelocity(newVelocity: number) {
     this.velocity = newVelocity;
   }

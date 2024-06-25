@@ -35,7 +35,7 @@ export default class MachineGun {
     this.curLevel = 1;
     this.maxLevel = 3;
     this.range = 200;
-    this.cost = [60, 140, 180];
+    this.cost = [60, 140];
     this.isLocked = false;
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;

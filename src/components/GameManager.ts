@@ -65,7 +65,7 @@ export default class GameManager {
     this.context = context;
     this.mouse = new Mouse();
     this.context.fillStyle = "black";
-    this.gameState = GameState.OVER;
+    this.gameState = GameState.WAITING;
     this.startBtn = {
       x: CanvasDimension.WIDTH / 2.5,
       y: CanvasDimension.HEIGHT / 2.5,
