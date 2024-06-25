@@ -315,6 +315,7 @@ export default class Level1 {
   }
 
   clean() {
+    console.log("hey");
     this.canvas.removeEventListener("mousemove", this.handleMouseMove);
     this.canvas.removeEventListener("click", this.handleClick);
   }

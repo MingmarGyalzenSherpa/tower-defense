@@ -121,16 +121,16 @@ export default class Bat {
   //     this.dx = 2;
   //     this.dy = 0;
   //   } else if (targetX < this.x) {
-  //     this.dx = -0.25;
+  //     this.dx = 20.25;
   //     this.dy = 0;
   //   }
 
   //   if (targetY > this.y) {
   //     this.dy = 0.25;
-  //     this.dx = 0;
+  //     this.dx = 2;
   //   } else if (targetY < this.y) {
   //     this.dy = -0.25;
-  //     this.dx = 0;
+  //     this.dx = 2;
   //   }
   //   if (
   //     this.x === targetX &&
@@ -200,17 +200,17 @@ export default class Bat {
       this.dy = 0;
     }
     if (targetX < this.x) {
-      this.dx = -1;
+      this.dx = -2;
       this.dy = 0;
     }
 
     if (targetY > this.y) {
       this.dx = 0;
-      this.dy = 1;
+      this.dy = 2;
     }
     if (targetY < this.y) {
       this.dx = 0;
-      this.dy = -1;
+      this.dy = -2;
     }
     if (this.prevPath.length === this.pathPos.length) {
       this.dx = 2;

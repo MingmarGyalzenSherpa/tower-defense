@@ -64,7 +64,7 @@ export default class GameManager {
     this.context = context;
     this.mouse = new Mouse();
     this.context.fillStyle = "black";
-    this.gameState = GameState.OVER;
+    this.gameState = GameState.WAITING;
     this.startBtn = {
       x: CanvasDimension.WIDTH / 2.5,
       y: CanvasDimension.HEIGHT / 2.5,
@@ -115,8 +115,11 @@ export default class GameManager {
     this.levelBg.src = LevelBg;
     this.curLevel = new Level1(this.canvas, this.context);
     requestAnimationFrame(this.start);
-    canvas.addEventListener("mousemove", this.handleMouseMove);
-    canvas.addEventListener("click", this.handleClick);
+    canvas.addEventListener("mousemove", this.gameManagerHandleMouseMove);
+    canvas.addEventListener(
+      "click",
+      this.gameManagerHandleMouseMovehandleClick
+    );
 
     document.addEventListener("keydown", this.handleKeyPress);
   }
@@ -138,7 +141,7 @@ export default class GameManager {
     }
   };
 
-  handleMouseMove = (e: MouseEvent) => {
+  gameManagerHandleMouseMove = (e: MouseEvent) => {
     if (this.gameState === GameState.PLAYING) return;
     this.mouse.x = e.offsetX;
     this.mouse.y = e.offsetY;
@@ -188,7 +191,7 @@ export default class GameManager {
     }
   };
 
-  handleClick = () => {
+  gameManagerHandleMouseMovehandleClick = () => {
     this.clickStartBtn();
     this.handleMenuClick();
     this.handlePausedClick();
@@ -211,9 +214,11 @@ export default class GameManager {
     if (collision(this.mouse, this.playAgainBtn)) {
       this.gameState = GameState.PLAYING;
       this.curLevel.clean();
-      switch (this.curLevel!) {
+      console.log(this.curLevelIndex);
+      switch (this.curLevelIndex) {
         case 0:
           this.curLevel = new Level1(this.canvas, this.context);
+          console.log("lfkjadsfkjsf");
           break;
 
         case 1:
@@ -272,7 +277,6 @@ export default class GameManager {
     );
 
     this.context.fillStyle = this.mainMenuBtn.color;
-    console.log(this.mainMenuBtn);
     this.context.fillText(
       "BACK TO MAIN",
       this.mainMenuBtn.x + this.mainMenuBtn.width / 2,
@@ -353,14 +357,11 @@ export default class GameManager {
       ) {
         switch (i) {
           case 0:
-            this.curLevel = i;
             this.curLevel = new Level1(this.canvas, this.context);
             this.gameState = GameState.PLAYING;
             break;
 
           case 1:
-            this.curLevel = i;
-
             break;
 
           case 2:
@@ -368,6 +369,7 @@ export default class GameManager {
             this.gameState = GameState.PLAYING;
             break;
         }
+        this.curLevelIndex = i;
       }
     }
   }
