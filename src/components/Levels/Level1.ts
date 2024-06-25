@@ -1,26 +1,24 @@
-import {
-  CanvasDimension,
-  CellDimensions,
-  WaveModeState,
-} from "../constants/constants";
-import collision from "../utils/utils";
-import Cell from "./Cell";
-import Mouse from "./Mouse";
-import Tiles from "../assets/tileset/tileset.png";
-import HealthImg from "../assets/health.png";
-import MoonTowerImg from "../assets/tower/redmoon_showcase.png";
-import CannonL1TowerHead from "../assets/tower/Cannon.png";
-import MachineGunTowerHead from "../assets/tower/MG.png";
-import CatapultTowerImg from "../assets/tower/tower-pulley_showcase.png";
-import Cannon from "./Towers/Cannon";
-import MachineGun from "./Towers/MachineGun";
-import CoinImg from "../assets/coin.png";
-import MoonTower from "./Towers/MoonTower";
-import Catapult from "./Towers/Catapult";
-import IAvailableTower from "../Interfaces/AvailableTowerInterface";
-import Orc from "./Enemies/Orc";
-import Golem from "./Enemies/Golem";
-export default class WaveMode {
+import { CanvasDimension, CellDimensions } from "../../constants/constants";
+import collision from "../../utils/utils";
+import Cell from "../Cell";
+import Mouse from "../Mouse";
+import Tiles from "../../assets/tileset/tileset.png";
+import Orc from "../Enemies/Orc";
+import HealthImg from "../../assets/health.png";
+import MoonTowerImg from "../../assets/tower/redmoon_showcase.png";
+import CannonL1TowerHead from "../../assets/tower/Cannon.png";
+import MachineGunTowerHead from "../../assets/tower/MG.png";
+import CatapultTowerImg from "../../assets/tower/tower-pulley_showcase.png";
+import Cannon from "../Towers/Cannon";
+import MachineGun from "../Towers/MachineGun";
+import CoinImg from "../../assets/coin.png";
+import MoonTower from "../Towers/MoonTower";
+import Catapult from "../Towers/Catapult";
+import IAvailableTower from "../../Interfaces/AvailableTowerInterface";
+import Skeleton from "../Enemies/Skeleton";
+import FireWorm from "../Enemies/FireWorm";
+import Bat from "../Enemies/Bat";
+export default class Level1 {
   context: CanvasRenderingContext2D;
   grids: Cell[];
   coin: number;
@@ -36,12 +34,6 @@ export default class WaveMode {
   moonTower: IAvailableTower;
   coinImg: CanvasImageSource;
   towers: any[];
-  hoverPath: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
   selectedPlacedTowerOptions: {
     upgrade: {
       x?: number;
@@ -56,66 +48,58 @@ export default class WaveMode {
       height: number;
     };
   };
-  startBtn: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
   selectedAvailableTower?: number;
   selectedDroppedTowerIndex?: number;
   enemies: any[];
   canvas: HTMLCanvasElement;
   availableTowers: IAvailableTower[];
-  waveModeState: WaveModeState;
+  currentWave: number;
+  waveTimer: number;
+  waveConfig: { enemies: { type: string; count: number }[] }[];
+  waveInProgress: boolean;
+  waveEnemySpawned: boolean;
+  waveInterval: number;
+  initialEnemyX?: number;
+  score: number;
   constructor(canvas: HTMLCanvasElement, context: CanvasRenderingContext2D) {
-    this.waveModeState = WaveModeState.EDITOR;
-    this.startBtn = {
-      x: CanvasDimension.WIDTH / 2 - 100,
-      y: CellDimensions.HEIGHT,
-      width: CellDimensions.WIDTH * 2,
-      height: 50,
-    };
     this.canvas = canvas;
     this.context = context;
     this.mouse = new Mouse();
     this.coinImg = new Image();
     this.coinImg.src = CoinImg;
+    this.score = 0;
     this.enemies = [];
     this.grids = [];
-    this.coin = 200;
+    this.coin = 280;
     this.frame = 0;
     this.bgImg = new Image();
     this.bgImg.src = Tiles;
-    this.health = 10;
+    this.health = 1;
     this.healthImg = new Image();
     this.healthImg.src = HealthImg;
-
-    this.hoverPath = {
-      x: 0,
-      y: 0,
-      width: CellDimensions.WIDTH,
-      height: CellDimensions.HEIGHT,
-    };
     this.cannonL1Tower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
+      cost: 80,
     };
     this.machineGunTower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
+      cost: 60,
     };
     this.moonTower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
+      cost: 100,
     };
     this.catapultTower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
+      cost: 40,
     };
 
     this.catapultTower.img.src = CatapultTowerImg;
@@ -140,62 +124,180 @@ export default class WaveMode {
 
     this.towers = [];
     //positions for path
-    this.pathsPos = [];
-
+    this.pathsPos = [
+      {
+        x: 0,
+        y: 5,
+      },
+      {
+        x: 1,
+        y: 5,
+      },
+      {
+        x: 2,
+        y: 5,
+      },
+      {
+        x: 3,
+        y: 5,
+      },
+      {
+        x: 3,
+        y: 4,
+      },
+      {
+        x: 3,
+        y: 3,
+      },
+      {
+        x: 4,
+        y: 3,
+      },
+      {
+        x: 5,
+        y: 3,
+      },
+      {
+        x: 6,
+        y: 3,
+      },
+      {
+        x: 7,
+        y: 3,
+      },
+      {
+        x: 7,
+        y: 4,
+      },
+      {
+        x: 7,
+        y: 5,
+      },
+      {
+        x: 7,
+        y: 6,
+      },
+      {
+        x: 8,
+        y: 6,
+      },
+      {
+        x: 9,
+        y: 6,
+      },
+      {
+        x: 10,
+        y: 6,
+      },
+      {
+        x: 11,
+        y: 6,
+      },
+      {
+        x: 11,
+        y: 5,
+      },
+      {
+        x: 12,
+        y: 5,
+      },
+      {
+        x: 13,
+        y: 5,
+      },
+      {
+        x: 14,
+        y: 5,
+      },
+    ];
+    // this.enemies.push(new Orc(this.context, this.pathsPos));
+    // this.enemies.push(new Skeleton(this.context, this.pathsPos));
+    // this.enemies.push(new FireWorm(this.context, this.pathsPos));
+    // this.enemies.push(new Bat(this.context, this.pathsPos));
+    //wave
+    this.waveConfig = [
+      {
+        enemies: [
+          {
+            type: "Bat",
+            count: 5,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Bat",
+            count: 4,
+          },
+          {
+            type: "Skeleton",
+            count: 3,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Skeleton",
+            count: 4,
+          },
+          {
+            type: "Orc",
+            count: 4,
+          },
+        ],
+      },
+      {
+        enemies: [
+          {
+            type: "Skeleton",
+            count: 3,
+          },
+          {
+            type: "Orc",
+            count: 3,
+          },
+          {
+            type: "FireWorm",
+            count: 5,
+          },
+        ],
+      },
+    ];
+    this.currentWave = 0;
+    this.waveInProgress = false;
+    this.waveTimer = 0;
+    this.waveEnemySpawned = false;
+    this.waveInterval = 5000;
     this.createGrid();
     this.drawGrid();
     this.canvas.addEventListener("mousemove", this.handleMouseMove);
     this.canvas.addEventListener("click", this.handleClick);
   }
 
-  clean() {
-    this.canvas.removeEventListener("mousemove", this.handleMouseMove);
-    this.canvas.removeEventListener("click", this.handleClick);
-  }
-
   handleClick = () => {
-    if (this.waveModeState === WaveModeState.EDITOR) {
-      //check if start btn is clicked
-      if (collision(this.mouse, this.startBtn)) {
-        this.waveModeState = WaveModeState.PLAYING;
-        this.enemies.push(new Golem(this.context, -100, this.pathsPos));
+    //check if resource tower is clicked
+    for (let i = 0; i < this.availableTowers.length; i++) {
+      if (
+        collision(this.mouse, {
+          x: this.availableTowers[i].x!,
+          y: this.availableTowers[i].y!,
+          width: this.availableTowers[i].width,
+          height: this.availableTowers[i].height,
+        })
+      ) {
+        this.selectedAvailableTower = i;
       }
-
-      //add or remove path
-      let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
-      let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
-
-      if (gridY < 2) return;
-      if (this.pathsPos.find((path) => path.x === gridX && path.y === gridY)) {
-        this.pathsPos = this.pathsPos.filter(
-          (path) => !(path.x === gridX && path.y === gridY)
-        );
-      } else {
-        this.pathsPos.push({ x: gridX, y: gridY });
-      }
-    } else {
-      //check if resource tower is clicked
-      for (let i = 0; i < this.availableTowers.length; i++) {
-        if (
-          collision(this.mouse, {
-            x: this.availableTowers[i].x!,
-            y: this.availableTowers[i].y!,
-            width: this.availableTowers[i].width,
-            height: this.availableTowers[i].height,
-          })
-        ) {
-          this.selectedAvailableTower = i;
-        }
-      }
-
-      //place tower
-      this.placeTower();
-
-      //handle placed tower options clicked
-      this.handlePlaceTowersOptionClick();
-
-      this.handlePlacedTowerClick();
     }
+
+    //place tower
+    this.placeTower();
+
+    //handle placed tower options clicked
+    this.handlePlaceTowersOptionClick();
+
+    this.handlePlacedTowerClick();
   };
 
   handlePlacedTowerClick() {
@@ -218,7 +320,14 @@ export default class WaveMode {
     console.log(this.selectedDroppedTowerIndex);
   }
 
+  clean() {
+    console.log("hey");
+    this.canvas.removeEventListener("mousemove", this.handleMouseMove);
+    this.canvas.removeEventListener("click", this.handleClick);
+  }
+
   handlePlaceTowersOptionClick() {
+    let tower = this.towers[this.selectedDroppedTowerIndex!];
     if (
       collision(this.mouse, {
         ...this.selectedPlacedTowerOptions.upgrade,
@@ -226,8 +335,14 @@ export default class WaveMode {
         y: this.selectedPlacedTowerOptions.upgrade.y!,
       })
     ) {
-      console.log("hehe");
-      this.towers[this.selectedDroppedTowerIndex!].upgrade();
+      console.log(tower);
+      console.log(tower.cost);
+      console.log(tower.curLevel);
+      console.log(tower.cost[tower.curLevel]);
+      console.log(this.coin);
+      if (tower.cost[tower.curLevel] > this.coin) return;
+      this.coin -= tower.cost[tower.curLevel];
+      tower.upgrade();
     }
 
     if (
@@ -262,60 +377,83 @@ export default class WaveMode {
     if (this.selectedDroppedTowerIndex === undefined) return;
 
     let selectedDroppedTower = this.towers[this.selectedDroppedTowerIndex];
-    if (selectedDroppedTower.curLevel === selectedDroppedTower.maxLevel) return;
+    if (selectedDroppedTower.curLevel !== selectedDroppedTower.maxLevel) {
+      //update the x,y of selectedPlacedTowerOptions
+      this.selectedPlacedTowerOptions.upgrade.x = selectedDroppedTower.x;
+      this.selectedPlacedTowerOptions.upgrade.y =
+        selectedDroppedTower.y + CellDimensions.HEIGHT;
 
-    //update the x,y of selectedPlacedTowerOptions
-    this.selectedPlacedTowerOptions.upgrade.x = selectedDroppedTower.x;
-    this.selectedPlacedTowerOptions.upgrade.y =
-      selectedDroppedTower.y + CellDimensions.HEIGHT;
+      this.selectedPlacedTowerOptions.break.x = selectedDroppedTower.x;
+      this.selectedPlacedTowerOptions.break.y =
+        this.selectedPlacedTowerOptions.upgrade.y! +
+        this.selectedPlacedTowerOptions.upgrade.height;
 
-    this.selectedPlacedTowerOptions.break.x = selectedDroppedTower.x;
-    this.selectedPlacedTowerOptions.break.y =
-      this.selectedPlacedTowerOptions.upgrade.y! +
-      this.selectedPlacedTowerOptions.upgrade.height;
+      this.context.beginPath();
+      this.context.fillStyle = "green";
+      this.context.fillRect(
+        this.selectedPlacedTowerOptions.upgrade.x!,
+        this.selectedPlacedTowerOptions.upgrade.y!,
+        this.selectedPlacedTowerOptions.upgrade.width,
+        this.selectedPlacedTowerOptions.upgrade.height
+      );
+      this.context.closePath();
 
-    this.context.beginPath();
-    this.context.fillStyle = "green";
-    this.context.fillRect(
-      this.selectedPlacedTowerOptions.upgrade.x!,
-      this.selectedPlacedTowerOptions.upgrade.y!,
-      this.selectedPlacedTowerOptions.upgrade.width,
-      this.selectedPlacedTowerOptions.upgrade.height
-    );
-    this.context.closePath();
+      this.context.beginPath();
+      this.context.fillStyle = "black";
+      this.context.font = "bold 14px Audiowide";
+      this.context.fillText(
+        "UPGRADE",
+        selectedDroppedTower.x,
+        selectedDroppedTower.y +
+          CellDimensions.HEIGHT +
+          selectedDroppedTower.height / 4
+      );
 
-    this.context.beginPath();
-    this.context.fillStyle = "black";
-    this.context.font = "bold 14px Audiowide";
-    this.context.fillText(
-      "UPGRADE",
-      selectedDroppedTower.x,
-      selectedDroppedTower.y +
-        CellDimensions.HEIGHT +
-        selectedDroppedTower.height / 4
-    );
+      this.context.closePath();
+      this.context.beginPath();
+      this.context.fillStyle = "red";
+      this.context.fillRect(
+        this.selectedPlacedTowerOptions.break.x!,
+        this.selectedPlacedTowerOptions.break.y!,
+        this.selectedPlacedTowerOptions.break.width,
+        this.selectedPlacedTowerOptions.break.height
+      );
+      this.context.closePath();
+      this.context.font = "bold 14px Audiowide";
+      this.context.fillStyle = "black";
 
-    this.context.closePath();
+      this.context.fillText(
+        "BREAK",
+        selectedDroppedTower.x,
+        selectedDroppedTower.y +
+          CellDimensions.HEIGHT +
+          selectedDroppedTower.height / 2
+      );
+    } else {
+      this.selectedPlacedTowerOptions.break.x = selectedDroppedTower.x;
+      this.selectedPlacedTowerOptions.break.y =
+        selectedDroppedTower.y + CellDimensions.HEIGHT;
+      this.context.closePath();
+      this.context.beginPath();
+      this.context.fillStyle = "red";
+      this.context.fillRect(
+        this.selectedPlacedTowerOptions.break.x!,
+        this.selectedPlacedTowerOptions.break.y!,
+        this.selectedPlacedTowerOptions.break.width,
+        this.selectedPlacedTowerOptions.break.height
+      );
+      this.context.closePath();
+      this.context.font = "bold 14px Audiowide";
+      this.context.fillStyle = "black";
 
-    this.context.beginPath();
-    this.context.fillStyle = "red";
-    this.context.fillRect(
-      this.selectedPlacedTowerOptions.break.x!,
-      this.selectedPlacedTowerOptions.break.y!,
-      this.selectedPlacedTowerOptions.break.width,
-      this.selectedPlacedTowerOptions.break.height
-    );
-    this.context.closePath();
-    this.context.font = "bold 14px Audiowide";
-    this.context.fillStyle = "black";
-
-    this.context.fillText(
-      "BREAK",
-      selectedDroppedTower.x,
-      selectedDroppedTower.y +
-        CellDimensions.HEIGHT +
-        selectedDroppedTower.height / 2
-    );
+      this.context.fillText(
+        "BREAK",
+        selectedDroppedTower.x,
+        selectedDroppedTower.y +
+          CellDimensions.HEIGHT +
+          selectedDroppedTower.height / 4
+      );
+    }
   }
 
   drawHealth() {
@@ -333,6 +471,7 @@ export default class WaveMode {
       CellDimensions.HEIGHT
     );
     this.context.font = "30px Audiowide";
+    this.context.fillStyle = "white";
     this.context.fillText(
       `${this.health}`,
       offsetX + CellDimensions.WIDTH,
@@ -353,7 +492,7 @@ export default class WaveMode {
       CellDimensions.HEIGHT
     );
     this.context.font = "20px Audiowide";
-    this.context.fillStyle = "black";
+    this.context.fillStyle = "white";
     this.context.fillText(
       `Coins: ${this.coin}`,
       offsetX + CellDimensions.WIDTH,
@@ -364,6 +503,7 @@ export default class WaveMode {
 
   // generateEnemy() {
   //   if (this.frame % 200 === 0 && this.frame % 600 != 0) {
+  //     this.enemies.push(new Orc(this.context, this.pathsPos));
   //   }
   // }
 
@@ -373,65 +513,47 @@ export default class WaveMode {
     }
   }
 
-  drawStartButton() {
+  drawScore() {
+    let scoreGridX = 11;
+    let scoreY = 60;
     this.context.beginPath();
+    this.context.font = "20px Audiowide";
     this.context.fillStyle = "white";
-    this.context.fillRect(
-      this.startBtn.x,
-      this.startBtn.y,
-      this.startBtn.width,
-      this.startBtn.height
-    );
-    let textOffsetY = 30;
-    this.context.fillStyle = "black";
-    this.context.textAlign = "center";
     this.context.fillText(
-      "START",
-      this.startBtn.x + this.startBtn.width / 2,
-      this.startBtn.y + textOffsetY,
-      this.startBtn.width
+      `Score: ${this.score}`,
+      scoreGridX * CellDimensions.WIDTH,
+      scoreY
     );
-    this.context.textAlign = "start";
-    this.context.closePath();
   }
 
   draw() {
     this.drawResources();
-
-    switch (this.waveModeState) {
-      case WaveModeState.EDITOR:
-        this.drawStartButton();
-        this.drawBackground();
-        this.drawHoverPath();
-        this.drawPath();
-
-        break;
-
-      case WaveModeState.PLAYING:
-        this.drawCoin();
-        this.drawHealth();
-        this.drawAvailableTowers();
-        this.drawBackground();
-        this.drawPath();
-        this.drawGrid();
-        this.drawSelectedAvailableTower();
-        this.drawTowers();
-        this.drawSelectedPlacedTowerRange();
-        this.drawSelectedPlacedTowerOptions();
-        this.drawEnemy();
-        break;
-    }
+    this.drawScore();
+    this.drawCoin();
+    this.drawHealth();
+    this.drawAvailableTowers();
+    this.drawBackground();
+    this.drawPath();
+    this.drawGrid();
+    this.drawSelectedAvailableTower();
+    this.drawTowers();
+    this.drawSelectedPlacedTowerRange();
+    this.drawSelectedPlacedTowerOptions();
+    this.drawEnemy();
   }
 
   update() {
     this.frame++;
     // this.generateEnemy();
+    // this.increaseCoin();
+    this.updateWave();
+    this.updateEnemies();
+    this.updateTowers();
+  }
 
-    if (this.waveModeState === WaveModeState.EDITOR) {
-    } else {
-      console.log(this.enemies);
-      this.updateEnemies();
-      this.updateTowers();
+  increaseCoin() {
+    if (this.frame % 200 === 0) {
+      this.coin += 20;
     }
   }
 
@@ -449,22 +571,80 @@ export default class WaveMode {
       this.enemies[i].update();
       if (!this.enemies[i].getHp()) {
         this.coin += this.enemies[i].coinGain;
+        this.score += this.enemies[i].coinGain;
         this.enemies.splice(i, 1);
 
         i--;
       }
-      if (this.enemies[i].x > CanvasDimension.WIDTH) {
+      if (this.enemies[i]?.x > CanvasDimension.WIDTH) {
         this.health--;
         this.enemies.splice(i, 1);
-
         i--;
       }
     }
   }
 
+  updateWave() {
+    //check if  wave is ongoing
+    if (!this.waveInProgress && this.currentWave < this.waveConfig.length) {
+      this.waveInProgress = true;
+      this.waveTimer = 0;
+    }
+
+    //if wave is in progress
+    if (this.waveInProgress) {
+      this.waveTimer++;
+      this.spawnEnemy();
+      if (this.enemies.length === 0 || this.waveTimer >= this.waveInterval) {
+        this.waveTimer = 0;
+        this.waveEnemySpawned = false;
+        this.currentWave++;
+      }
+    }
+  }
+
+  spawnEnemy() {
+    this.initialEnemyX = -100;
+    let gapBetweenEnemyX = 150;
+    if (this.waveEnemySpawned) return;
+    const currentWaveDetail = this.waveConfig[this.currentWave];
+    for (const enemyDetail of currentWaveDetail.enemies) {
+      let enemy;
+      for (let i = 0; i < enemyDetail.count; i++) {
+        this.initialEnemyX = this.initialEnemyX - gapBetweenEnemyX;
+        switch (enemyDetail.type) {
+          case "Bat":
+            enemy = new Bat(this.context, this.initialEnemyX, this.pathsPos);
+            break;
+
+          case "Skeleton":
+            enemy = new Skeleton(
+              this.context,
+              this.initialEnemyX,
+              this.pathsPos
+            );
+            break;
+
+          case "Orc":
+            enemy = new Orc(this.context, this.initialEnemyX, this.pathsPos);
+            break;
+          case "FireWorm":
+            enemy = new FireWorm(
+              this.context,
+              this.initialEnemyX,
+              this.pathsPos
+            );
+            break;
+        }
+        this.enemies.push(enemy);
+      }
+    }
+    this.waveEnemySpawned = true;
+  }
+
   drawResources() {
     this.context.beginPath();
-    this.context.fillStyle = "lightgreen";
+    this.context.fillStyle = "#E0A75E";
     this.context.fillRect(0, 0, this.canvas.width, CellDimensions.HEIGHT * 2);
     this.context.closePath();
   }
@@ -504,6 +684,16 @@ export default class WaveMode {
           this.availableTowers[i].height
         );
       }
+
+      //draw cost
+      let textOffsetX = 30;
+      let textOffsetY = -20;
+      this.context.font = "16px Audiowide";
+      this.context.fillText(
+        `${this.availableTowers[i].cost}`,
+        this.availableTowers[i].x! + textOffsetX,
+        this.availableTowers[i].y! + textOffsetY
+      );
       //draw image
       this.context.drawImage(
         this.availableTowers[i].img as CanvasImageSource,
@@ -613,28 +803,12 @@ offsetY properties of the MouseEvent. */
         );
         break;
     }
-
+    console.log(tower!.cost);
+    console.log(tower!.cost[tower!.curLevel - 1]);
+    if (tower!.cost[tower!.curLevel - 1] > this.coin) return;
+    this.coin -= tower!.cost[tower!.curLevel - 1];
     this.towers.push(tower!);
     this.selectedAvailableTower = undefined;
-  }
-
-  drawHoverPath() {
-    let gridX = Math.floor(this.mouse.x / CellDimensions.WIDTH);
-    let gridY = Math.floor(this.mouse.y / CellDimensions.HEIGHT);
-    if (gridY < 2) return;
-    this.hoverPath.x = gridX * CellDimensions.WIDTH;
-    this.hoverPath.y = gridY * CellDimensions.HEIGHT;
-    this.context.drawImage(
-      this.bgImg,
-      220,
-      50,
-      100,
-      100,
-      this.hoverPath.x,
-      this.hoverPath.y,
-      CellDimensions.WIDTH,
-      CellDimensions.HEIGHT
-    );
   }
 
   drawGrid() {

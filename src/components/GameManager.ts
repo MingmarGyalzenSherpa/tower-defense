@@ -1,10 +1,11 @@
 import { CanvasDimension, GameState } from "../constants/constants";
-import Level1 from "./Level1";
+import Level1 from "./Levels/Level1";
 import Mouse from "./Mouse";
 import StartBtnImg from "../assets/start-btn.png";
 import collision from "../utils/utils";
 import LevelBg from "../assets/levelBackground.png";
-import WaveMode from "./WaveMode";
+import WaveMode from "./Levels/WaveMode";
+import Level2 from "./Levels/Level2";
 export default class GameManager {
   levels: {
     x?: number;
@@ -386,21 +387,21 @@ export default class GameManager {
           height: this.levels[i].height!,
         })
       ) {
+        this.curLevelIndex = i;
         switch (i) {
           case 0:
             this.curLevel = new Level1(this.canvas, this.context);
-            this.gameState = GameState.PLAYING;
             break;
 
           case 1:
+            this.curLevel = new Level2(this.canvas, this.context);
             break;
 
           case 2:
             this.curLevel = new WaveMode(this.canvas, this.context);
-            this.gameState = GameState.PLAYING;
             break;
         }
-        this.curLevelIndex = i;
+        this.gameState = GameState.PLAYING;
       }
     }
   }

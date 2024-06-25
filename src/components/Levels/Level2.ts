@@ -1,24 +1,24 @@
-import { CanvasDimension, CellDimensions } from "../constants/constants";
-import collision from "../utils/utils";
-import Cell from "./Cell";
-import Mouse from "./Mouse";
-import Tiles from "../assets/tileset/tileset.png";
-import Orc from "./Enemies/Orc";
-import HealthImg from "../assets/health.png";
-import MoonTowerImg from "../assets/tower/redmoon_showcase.png";
-import CannonL1TowerHead from "../assets/tower/Cannon.png";
-import MachineGunTowerHead from "../assets/tower/MG.png";
-import CatapultTowerImg from "../assets/tower/tower-pulley_showcase.png";
-import Cannon from "./Towers/Cannon";
-import MachineGun from "./Towers/MachineGun";
-import CoinImg from "../assets/coin.png";
-import MoonTower from "./Towers/MoonTower";
-import Catapult from "./Towers/Catapult";
-import IAvailableTower from "../Interfaces/AvailableTowerInterface";
-import Skeleton from "./Enemies/Skeleton";
-import FireWorm from "./Enemies/FireWorm";
-import Bat from "./Enemies/Bat";
-export default class Level1 {
+import { CanvasDimension, CellDimensions } from "../../constants/constants";
+import collision from "../../utils/utils";
+import Cell from "../Cell";
+import Mouse from "../Mouse";
+import Tiles from "../../assets/tileset/tileset.png";
+import Orc from "../Enemies/Orc";
+import HealthImg from "../../assets/health.png";
+import MoonTowerImg from "../../assets/tower/redmoon_showcase.png";
+import CannonL1TowerHead from "../../assets/tower/Cannon.png";
+import MachineGunTowerHead from "../../assets/tower/MG.png";
+import CatapultTowerImg from "../../assets/tower/tower-pulley_showcase.png";
+import Cannon from "../Towers/Cannon";
+import MachineGun from "../Towers/MachineGun";
+import CoinImg from "../../assets/coin.png";
+import MoonTower from "../Towers/MoonTower";
+import Catapult from "../Towers/Catapult";
+import IAvailableTower from "../../Interfaces/AvailableTowerInterface";
+import Skeleton from "../Enemies/Skeleton";
+import FireWorm from "../Enemies/FireWorm";
+import Bat from "../Enemies/Bat";
+export default class Level2 {
   context: CanvasRenderingContext2D;
   grids: Cell[];
   coin: number;
@@ -81,21 +81,25 @@ export default class Level1 {
       img: new Image(),
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
+      cost: 80,
     };
     this.machineGunTower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
+      cost: 60,
     };
     this.moonTower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
+      cost: 100,
     };
     this.catapultTower = {
       img: new Image(),
       width: CellDimensions.WIDTH,
       height: CellDimensions.HEIGHT,
+      cost: 40,
     };
 
     this.catapultTower.img.src = CatapultTowerImg;
@@ -514,7 +518,7 @@ export default class Level1 {
     let scoreY = 60;
     this.context.beginPath();
     this.context.font = "20px Audiowide";
-    this.context.fillStyle = "black";
+    this.context.fillStyle = "white";
     this.context.fillText(
       `Score: ${this.score}`,
       scoreGridX * CellDimensions.WIDTH,
@@ -680,6 +684,16 @@ export default class Level1 {
           this.availableTowers[i].height
         );
       }
+
+      //draw cost
+      let textOffsetX = 30;
+      let textOffsetY = -20;
+      this.context.font = "16px Audiowide";
+      this.context.fillText(
+        `${this.availableTowers[i].cost}`,
+        this.availableTowers[i].x! + textOffsetX,
+        this.availableTowers[i].y! + textOffsetY
+      );
       //draw image
       this.context.drawImage(
         this.availableTowers[i].img as CanvasImageSource,

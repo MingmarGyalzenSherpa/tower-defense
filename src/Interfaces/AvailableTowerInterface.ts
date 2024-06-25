@@ -4,4 +4,5 @@ export default interface IAvailableTower {
   img: any;
   width: number;
   height: number;
+  cost: number;
 }
