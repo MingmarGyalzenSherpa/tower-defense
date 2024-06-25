@@ -15,6 +15,7 @@ import CoinImg from "../assets/coin.png";
 import MoonTower from "./Towers/MoonTower";
 import Catapult from "./Towers/Catapult";
 import IAvailableTower from "../Interfaces/AvailableTowerInterface";
+import Skeleton from "./Enemies/Skeleton";
 export default class Level1 {
   context: CanvasRenderingContext2D;
   grids: Cell[];
@@ -194,7 +195,8 @@ export default class Level1 {
         y: 5,
       },
     ];
-    this.enemies.push(new Orc(this.context, this.pathsPos));
+    // this.enemies.push(new Orc(this.context, this.pathsPos));
+    this.enemies.push(new Skeleton(this.context, this.pathsPos));
 
     this.createGrid();
     this.drawGrid();

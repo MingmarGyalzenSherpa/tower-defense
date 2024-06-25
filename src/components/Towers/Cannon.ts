@@ -5,6 +5,7 @@ import CannonBase from "../../assets/tower/Tower.png";
 import Projectile from "../Projectile";
 import ProjectileImg from "../../assets/tower/Bullet_Cannon.png";
 import collision from "../../utils/utils";
+import Explosion from "../Explosion";
 export default class Cannon {
   x: number;
   y: number;
@@ -19,6 +20,7 @@ export default class Cannon {
   baseImg: CanvasImageSource;
   headImg: CanvasImageSource;
   range: number;
+  explosions: Explosion[];
   isLocked: boolean;
   targetEnemy: any;
   prevTargetEnemy: any;
@@ -37,6 +39,7 @@ export default class Cannon {
     this.range = 200;
     this.cost = 100;
     this.isLocked = false;
+    this.explosions = [];
     this.width = CellDimensions.WIDTH;
     this.height = CellDimensions.HEIGHT;
     this.baseImg = new Image();
@@ -99,6 +102,7 @@ export default class Cannon {
       );
     }
     this.context.closePath();
+    this.drawExplosions();
   }
 
   /**
@@ -165,6 +169,7 @@ export default class Cannon {
 
         this.lastFireTime = curTime;
       }
+      this.updateExplosions();
     }
 
     //update projectiles
@@ -177,6 +182,21 @@ export default class Cannon {
     if (!this.targetEnemy?.hp) {
       this.isLocked = false;
       this.targetEnemy = undefined;
+    }
+  }
+
+  drawExplosions() {
+    for (let i = 0; i < this.explosions.length; i++) {
+      this.explosions[i].draw();
+    }
+  }
+
+  updateExplosions() {
+    for (let i = 0; i < this.explosions.length; i++) {
+      if (this.explosions[i].srcX === this.explosions[i].spriteFrame) {
+        this.explosions.splice(i, 1);
+        i--;
+      }
     }
   }
 
@@ -221,6 +241,9 @@ export default class Cannon {
         this.targetEnemy.decreaseHp(this.damage);
         this.projectiles.splice(i, 1);
         i--;
+        this.explosions.push(
+          new Explosion(this.targetEnemy.x, this.targetEnemy.y, this.context)
+        );
       }
     }
   }

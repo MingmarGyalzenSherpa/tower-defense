@@ -101,6 +101,4 @@ export default class Projectile {
     this.y += this.unitVector.y * this.speed * diff;
     console.log({ x: this.x, y: this.y });
   }
-
-  checkCollision() {}
 }
